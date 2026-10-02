@@ -1,0 +1,4660 @@
+{
+  "record_type": "semigroup_basis_equivalence_proofs",
+  "schema_version": 1,
+  "created_at": "2026-09-26T10:46:45.721269+00:00",
+  "bundle": {
+    "path": "sealed-bases-v1.json",
+    "sha256": "2c75b7845eb1aea1edaca09b1c062836c3263527bbe27a0d6fa86fe7feb132b6"
+  },
+  "separation_report": {
+    "path": "separation-v1.json",
+    "sha256": "20a737eb1f3f695bf4b843cea6359bde6ad71abecf2e10c221d7cd98a29316d3"
+  },
+  "vampire_version": "Vampire 5.1.0 (Release build, commit 7b2f410 on 2026-08-13 10:17:34 +0200)",
+  "vampire_sha256": "1bc3c598494d790f9b385d1118c7ab9c03f8f146721a6567700679c407314444",
+  "casc_seconds": 600,
+  "summary": {
+    "bases": 536,
+    "survivor_pairs": 31,
+    "equivalent_pairs": 31,
+    "open_pairs": 0,
+    "obligations": 621,
+    "proved_obligations": 621,
+    "distinct_theories": 505,
+    "distinct_theories_lower_bound": 505,
+    "class_sizes": {
+      "1": 474,
+      "2": 31
+    }
+  },
+  "pairs": [
+    {
+      "pair": [
+        "sb-03be9264dbbc0443",
+        "sb-44c426c5ade84ccd"
+      ],
+      "status": "equivalent",
+      "obligations": 12,
+      "proved": 12
+    },
+    {
+      "pair": [
+        "sb-0f13b4b66a49655f",
+        "sb-e2a549a27d377069"
+      ],
+      "status": "equivalent",
+      "obligations": 50,
+      "proved": 50
+    },
+    {
+      "pair": [
+        "sb-12dfbcbd98e9d430",
+        "sb-d8639966eb8336a8"
+      ],
+      "status": "equivalent",
+      "obligations": 14,
+      "proved": 14
+    },
+    {
+      "pair": [
+        "sb-1682925a02ac6c68",
+        "sb-c61e18abe7a30af0"
+      ],
+      "status": "equivalent",
+      "obligations": 19,
+      "proved": 19
+    },
+    {
+      "pair": [
+        "sb-1896b2ef908d05fc",
+        "sb-9e246a2a17543a1a"
+      ],
+      "status": "equivalent",
+      "obligations": 6,
+      "proved": 6
+    },
+    {
+      "pair": [
+        "sb-18b2371c97c53596",
+        "sb-7f48912e257bae21"
+      ],
+      "status": "equivalent",
+      "obligations": 28,
+      "proved": 28
+    },
+    {
+      "pair": [
+        "sb-19914390b092baa4",
+        "sb-2a7d53331d848a37"
+      ],
+      "status": "equivalent",
+      "obligations": 10,
+      "proved": 10
+    },
+    {
+      "pair": [
+        "sb-20a9f19583fbe8b0",
+        "sb-93a755613dd3d214"
+      ],
+      "status": "equivalent",
+      "obligations": 12,
+      "proved": 12
+    },
+    {
+      "pair": [
+        "sb-293422bc5462de0a",
+        "sb-2edbf61e3221a20c"
+      ],
+      "status": "equivalent",
+      "obligations": 40,
+      "proved": 40
+    },
+    {
+      "pair": [
+        "sb-36facfa49854bd9e",
+        "sb-66e66065963f8a82"
+      ],
+      "status": "equivalent",
+      "obligations": 29,
+      "proved": 29
+    },
+    {
+      "pair": [
+        "sb-37f6bb57596d0032",
+        "sb-ecccb8e02bc120d2"
+      ],
+      "status": "equivalent",
+      "obligations": 50,
+      "proved": 50
+    },
+    {
+      "pair": [
+        "sb-3934e08097bd819e",
+        "sb-a42cc11079303219"
+      ],
+      "status": "equivalent",
+      "obligations": 26,
+      "proved": 26
+    },
+    {
+      "pair": [
+        "sb-3ecfd7a8c1b959aa",
+        "sb-594e8819125aa903"
+      ],
+      "status": "equivalent",
+      "obligations": 28,
+      "proved": 28
+    },
+    {
+      "pair": [
+        "sb-57b6e463024e22ba",
+        "sb-821427ec4508dd18"
+      ],
+      "status": "equivalent",
+      "obligations": 8,
+      "proved": 8
+    },
+    {
+      "pair": [
+        "sb-58c36e5830e8f53a",
+        "sb-78143bd4c961098e"
+      ],
+      "status": "equivalent",
+      "obligations": 14,
+      "proved": 14
+    },
+    {
+      "pair": [
+        "sb-6c1e53d09db9fbae",
+        "sb-dfccf083bb302aa5"
+      ],
+      "status": "equivalent",
+      "obligations": 6,
+      "proved": 6
+    },
+    {
+      "pair": [
+        "sb-6d18429a6acd4293",
+        "sb-e14439e07a9b09bd"
+      ],
+      "status": "equivalent",
+      "obligations": 12,
+      "proved": 12
+    },
+    {
+      "pair": [
+        "sb-82211948a14ad896",
+        "sb-9c622e44ebc1dbce"
+      ],
+      "status": "equivalent",
+      "obligations": 14,
+      "proved": 14
+    },
+    {
+      "pair": [
+        "sb-937f35816d39a8ee",
+        "sb-b7e86433e409f4de"
+      ],
+      "status": "equivalent",
+      "obligations": 8,
+      "proved": 8
+    },
+    {
+      "pair": [
+        "sb-9500dc808ed32ac3",
+        "sb-ee387bc669a1b4bc"
+      ],
+      "status": "equivalent",
+      "obligations": 14,
+      "proved": 14
+    },
+    {
+      "pair": [
+        "sb-9900c5ff6eeff208",
+        "sb-b500086bb966c8ae"
+      ],
+      "status": "equivalent",
+      "obligations": 14,
+      "proved": 14
+    },
+    {
+      "pair": [
+        "sb-a48f3d18890a23c1",
+        "sb-c23a81b23ec6f7e4"
+      ],
+      "status": "equivalent",
+      "obligations": 10,
+      "proved": 10
+    },
+    {
+      "pair": [
+        "sb-a86475960551b00b",
+        "sb-ea4419f9a5e0590a"
+      ],
+      "status": "equivalent",
+      "obligations": 15,
+      "proved": 15
+    },
+    {
+      "pair": [
+        "sb-a8add80a8628c470",
+        "sb-bd5b6335fa037588"
+      ],
+      "status": "equivalent",
+      "obligations": 13,
+      "proved": 13
+    },
+    {
+      "pair": [
+        "sb-b2cebca7ee5ffd6e",
+        "sb-b4d8398a56f87c9c"
+      ],
+      "status": "equivalent",
+      "obligations": 26,
+      "proved": 26
+    },
+    {
+      "pair": [
+        "sb-c49ae60c68354b38",
+        "sb-cbb3903dad83d03c"
+      ],
+      "status": "equivalent",
+      "obligations": 22,
+      "proved": 22
+    },
+    {
+      "pair": [
+        "sb-c951cb7c1160f48e",
+        "sb-f037f29809ad15d8"
+      ],
+      "status": "equivalent",
+      "obligations": 15,
+      "proved": 15
+    },
+    {
+      "pair": [
+        "sb-ca40ac2f845aead4",
+        "sb-ea8a692f1bc136f8"
+      ],
+      "status": "equivalent",
+      "obligations": 16,
+      "proved": 16
+    },
+    {
+      "pair": [
+        "sb-de9f06d522aed5f4",
+        "sb-ed4744766dab4ccc"
+      ],
+      "status": "equivalent",
+      "obligations": 6,
+      "proved": 6
+    },
+    {
+      "pair": [
+        "sb-e793af5ca9054cbc",
+        "sb-e9c6e145c1ed4b46"
+      ],
+      "status": "equivalent",
+      "obligations": 32,
+      "proved": 32
+    },
+    {
+      "pair": [
+        "sb-e833a554bbc7ee4e",
+        "sb-f3af54bce1485c55"
+      ],
+      "status": "equivalent",
+      "obligations": 52,
+      "proved": 52
+    }
+  ],
+  "obligations": [
+    {
+      "source": "sb-03be9264dbbc0443",
+      "target": "sb-44c426c5ade84ccd",
+      "obligation_id": "o-063292a207c37c4df8ce",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-03be9264dbbc0443",
+      "target": "sb-44c426c5ade84ccd",
+      "obligation_id": "o-c67fec2172653fef2c30",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-03be9264dbbc0443",
+      "target": "sb-44c426c5ade84ccd",
+      "obligation_id": "o-92b7c670c91fef8e21f2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-03be9264dbbc0443",
+      "target": "sb-44c426c5ade84ccd",
+      "obligation_id": "o-aade072acf802ce7ecd4",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-03be9264dbbc0443",
+      "target": "sb-44c426c5ade84ccd",
+      "obligation_id": "o-e454e6d676390f58deae",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-03be9264dbbc0443",
+      "target": "sb-44c426c5ade84ccd",
+      "obligation_id": "o-360a23d66949052a8568",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-44c426c5ade84ccd",
+      "target": "sb-03be9264dbbc0443",
+      "obligation_id": "o-06b13fdf259ab4411d0c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-44c426c5ade84ccd",
+      "target": "sb-03be9264dbbc0443",
+      "obligation_id": "o-df19fdd51bf0bb24d705",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-44c426c5ade84ccd",
+      "target": "sb-03be9264dbbc0443",
+      "obligation_id": "o-20250984a9a89059a711",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-44c426c5ade84ccd",
+      "target": "sb-03be9264dbbc0443",
+      "obligation_id": "o-39a39f123ca91b9fb80e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-44c426c5ade84ccd",
+      "target": "sb-03be9264dbbc0443",
+      "obligation_id": "o-99bfd6a2b75fbd05590c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-44c426c5ade84ccd",
+      "target": "sb-03be9264dbbc0443",
+      "obligation_id": "o-023b17f405340ce14823",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-a0984ecd18ec5f617f20",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-36852e26744d4b50a16f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-250a8f7071501de0fd7e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-2276fef606c48b08a133",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-ca9e0e24d7e68e675f79",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-57c00b3cce2aefdc5527",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-88fdda9f42d13c372664",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-ea80a84c109c111fa433",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-c2323f81206107754997",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-df8cd7e4210001f5e724",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-79361ef240095cb2abaf",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-18dc05e063a453236a11",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-f9f5367cd1787bd25ae5",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-436e4f7cc94e29c589ad",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-c88bb1e9466aa39cc707",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-abc5ec0a5318f875c5a4",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-c2ca4f9dd41ba694380f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-0a3b683250a3f7e74e8e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-46b0c330d642a26b95b6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-cb8e0230cdfc75481c8f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-e7a10a4a9813c94ae06c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-1ac1a2d1ca6812a98b58",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-8823871a58da90637665",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-547c9377ea654d0f6b68",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-0f13b4b66a49655f",
+      "target": "sb-e2a549a27d377069",
+      "obligation_id": "o-b1f724093ad8c15617bb",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-b3b227b5b536fad5195d",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-610c893d99c1b5f2656a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-3e158bca928dbb34cb10",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-4e3231d8b381891dfad3",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-d5c7102ba3d33764f60f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-b3e11c8870b095245cc4",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-7696b8e1810661dda4cd",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-f1082552883b21a8151e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-70ecb36831b0c3d0b154",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-8ea342c299a1f4c213ab",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-e1c62d74317c4a6c55a3",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-ab6e49df0bf5eebb4984",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-b71908adcc18ed49a795",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-e34ebadb657f57dda37e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-fb4e7e53d4b3ba84eef7",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-5fb3680aab124c5ae28a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-45241d798431a83e5328",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-398c92b1a3112daee0b8",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-2a9d1f42963259da1657",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-fa1e4aa18ff222233508",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-9c3723a0eae2f3b5aa67",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-e6e9c0e167eae8d31a48",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-aa2ada9cbea17501f6be",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-9ee53987f4356c376d1d",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e2a549a27d377069",
+      "target": "sb-0f13b4b66a49655f",
+      "obligation_id": "o-0af63cabed0b98b30407",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-12dfbcbd98e9d430",
+      "target": "sb-d8639966eb8336a8",
+      "obligation_id": "o-ecca3523e274251ecd7d",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-12dfbcbd98e9d430",
+      "target": "sb-d8639966eb8336a8",
+      "obligation_id": "o-af8d004704abccf6bebf",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-12dfbcbd98e9d430",
+      "target": "sb-d8639966eb8336a8",
+      "obligation_id": "o-dfb3a8f9306442423081",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-12dfbcbd98e9d430",
+      "target": "sb-d8639966eb8336a8",
+      "obligation_id": "o-9157ac37287287915024",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-12dfbcbd98e9d430",
+      "target": "sb-d8639966eb8336a8",
+      "obligation_id": "o-7075fc7254c7800d86c2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-12dfbcbd98e9d430",
+      "target": "sb-d8639966eb8336a8",
+      "obligation_id": "o-f315c42d0315f0e04a10",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-12dfbcbd98e9d430",
+      "target": "sb-d8639966eb8336a8",
+      "obligation_id": "o-e1dd361faef8c23715be",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-d8639966eb8336a8",
+      "target": "sb-12dfbcbd98e9d430",
+      "obligation_id": "o-4c6137ed4561c8592797",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-d8639966eb8336a8",
+      "target": "sb-12dfbcbd98e9d430",
+      "obligation_id": "o-9a1ffe719ea83ac96cfa",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-d8639966eb8336a8",
+      "target": "sb-12dfbcbd98e9d430",
+      "obligation_id": "o-3b362ddfda642cf7202f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-d8639966eb8336a8",
+      "target": "sb-12dfbcbd98e9d430",
+      "obligation_id": "o-d2566c8d7d52feeeacda",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-d8639966eb8336a8",
+      "target": "sb-12dfbcbd98e9d430",
+      "obligation_id": "o-ab14429eb21a4be71450",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-d8639966eb8336a8",
+      "target": "sb-12dfbcbd98e9d430",
+      "obligation_id": "o-f3dd191aaf164e38f854",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-d8639966eb8336a8",
+      "target": "sb-12dfbcbd98e9d430",
+      "obligation_id": "o-091cce24998c8f64301c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-1682925a02ac6c68",
+      "target": "sb-c61e18abe7a30af0",
+      "obligation_id": "o-9e083859e36d518b7472",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-1682925a02ac6c68",
+      "target": "sb-c61e18abe7a30af0",
+      "obligation_id": "o-c8cf244343739564efda",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-1682925a02ac6c68",
+      "target": "sb-c61e18abe7a30af0",
+      "obligation_id": "o-db3ed9a0127b1a0024fb",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-1682925a02ac6c68",
+      "target": "sb-c61e18abe7a30af0",
+      "obligation_id": "o-464688c2c390da04a38f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-1682925a02ac6c68",
+      "target": "sb-c61e18abe7a30af0",
+      "obligation_id": "o-3a95fb2517d8542d194f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-1682925a02ac6c68",
+      "target": "sb-c61e18abe7a30af0",
+      "obligation_id": "o-880ec1e7b691d492a275",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-1682925a02ac6c68",
+      "target": "sb-c61e18abe7a30af0",
+      "obligation_id": "o-8f3e1bb73b45b88128b0",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-1682925a02ac6c68",
+      "target": "sb-c61e18abe7a30af0",
+      "obligation_id": "o-3c90b7b4a38451408fcf",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-1682925a02ac6c68",
+      "target": "sb-c61e18abe7a30af0",
+      "obligation_id": "o-5c213ef93347639e037f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-1682925a02ac6c68",
+      "target": "sb-c61e18abe7a30af0",
+      "obligation_id": "o-0ec4b0ba65ba951de18c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c61e18abe7a30af0",
+      "target": "sb-1682925a02ac6c68",
+      "obligation_id": "o-60447891979f9bedea74",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c61e18abe7a30af0",
+      "target": "sb-1682925a02ac6c68",
+      "obligation_id": "o-d37f4c8071e3aa7a0f4f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c61e18abe7a30af0",
+      "target": "sb-1682925a02ac6c68",
+      "obligation_id": "o-f2d543f8ff8bb7d587af",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c61e18abe7a30af0",
+      "target": "sb-1682925a02ac6c68",
+      "obligation_id": "o-3da0ec3c502469ee6062",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c61e18abe7a30af0",
+      "target": "sb-1682925a02ac6c68",
+      "obligation_id": "o-7ee6acc6f1cae792f455",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c61e18abe7a30af0",
+      "target": "sb-1682925a02ac6c68",
+      "obligation_id": "o-dc7a8752f33a73fc2324",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c61e18abe7a30af0",
+      "target": "sb-1682925a02ac6c68",
+      "obligation_id": "o-bbd7cc42c0190d18b78a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c61e18abe7a30af0",
+      "target": "sb-1682925a02ac6c68",
+      "obligation_id": "o-e8e0a21a93661a5c3311",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c61e18abe7a30af0",
+      "target": "sb-1682925a02ac6c68",
+      "obligation_id": "o-4365fe7d31094784feb6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-1896b2ef908d05fc",
+      "target": "sb-9e246a2a17543a1a",
+      "obligation_id": "o-6be91c974dc17f3173b4",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-1896b2ef908d05fc",
+      "target": "sb-9e246a2a17543a1a",
+      "obligation_id": "o-27034d640a6568f6d466",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-1896b2ef908d05fc",
+      "target": "sb-9e246a2a17543a1a",
+      "obligation_id": "o-d28e32bd90d798ddc012",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9e246a2a17543a1a",
+      "target": "sb-1896b2ef908d05fc",
+      "obligation_id": "o-a5321d4cf21bb049730d",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9e246a2a17543a1a",
+      "target": "sb-1896b2ef908d05fc",
+      "obligation_id": "o-3b180c294cd7248a4684",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9e246a2a17543a1a",
+      "target": "sb-1896b2ef908d05fc",
+      "obligation_id": "o-7f9de67abddf0200739e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-18b2371c97c53596",
+      "target": "sb-7f48912e257bae21",
+      "obligation_id": "o-62994719b95709e0b6fd",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-18b2371c97c53596",
+      "target": "sb-7f48912e257bae21",
+      "obligation_id": "o-413693ad80964e9b2a7c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-18b2371c97c53596",
+      "target": "sb-7f48912e257bae21",
+      "obligation_id": "o-5ec3fd08490c36cc068e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-18b2371c97c53596",
+      "target": "sb-7f48912e257bae21",
+      "obligation_id": "o-bdbcabe24fc981525420",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-18b2371c97c53596",
+      "target": "sb-7f48912e257bae21",
+      "obligation_id": "o-0ddf8eb7ce5a04e244fe",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-18b2371c97c53596",
+      "target": "sb-7f48912e257bae21",
+      "obligation_id": "o-5d86bcd51d36f7ad64de",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-18b2371c97c53596",
+      "target": "sb-7f48912e257bae21",
+      "obligation_id": "o-05fd828b1c6fe5eeb004",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-18b2371c97c53596",
+      "target": "sb-7f48912e257bae21",
+      "obligation_id": "o-5ed11224d2ea498284a1",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-18b2371c97c53596",
+      "target": "sb-7f48912e257bae21",
+      "obligation_id": "o-813177e01a2d7b5982fe",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-18b2371c97c53596",
+      "target": "sb-7f48912e257bae21",
+      "obligation_id": "o-858bb02679248d664ac2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-18b2371c97c53596",
+      "target": "sb-7f48912e257bae21",
+      "obligation_id": "o-48ef548b2f33f9fe026b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-18b2371c97c53596",
+      "target": "sb-7f48912e257bae21",
+      "obligation_id": "o-b6d7f512a6e00dafb355",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-18b2371c97c53596",
+      "target": "sb-7f48912e257bae21",
+      "obligation_id": "o-2d44757f2371cfeb49f0",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-18b2371c97c53596",
+      "target": "sb-7f48912e257bae21",
+      "obligation_id": "o-81a0de397187dafd7081",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-7f48912e257bae21",
+      "target": "sb-18b2371c97c53596",
+      "obligation_id": "o-92f22ddbedce7284fbb3",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-7f48912e257bae21",
+      "target": "sb-18b2371c97c53596",
+      "obligation_id": "o-da02fc85077df8f7c385",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-7f48912e257bae21",
+      "target": "sb-18b2371c97c53596",
+      "obligation_id": "o-7d5aa63accee08f118c3",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-7f48912e257bae21",
+      "target": "sb-18b2371c97c53596",
+      "obligation_id": "o-ec4ace391dace291ff2c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-7f48912e257bae21",
+      "target": "sb-18b2371c97c53596",
+      "obligation_id": "o-4695e2a20fac5f14a656",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-7f48912e257bae21",
+      "target": "sb-18b2371c97c53596",
+      "obligation_id": "o-ab898c79a1f5dc593c0e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-7f48912e257bae21",
+      "target": "sb-18b2371c97c53596",
+      "obligation_id": "o-3c81c0584f55f68c0dff",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-7f48912e257bae21",
+      "target": "sb-18b2371c97c53596",
+      "obligation_id": "o-756d9aea26f8fcdc4566",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-7f48912e257bae21",
+      "target": "sb-18b2371c97c53596",
+      "obligation_id": "o-a04a2ed68a02c9b03325",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-7f48912e257bae21",
+      "target": "sb-18b2371c97c53596",
+      "obligation_id": "o-0dbae09e48756101f5ba",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-7f48912e257bae21",
+      "target": "sb-18b2371c97c53596",
+      "obligation_id": "o-e9fe8b5c8a606e036576",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-7f48912e257bae21",
+      "target": "sb-18b2371c97c53596",
+      "obligation_id": "o-acde7a4d8b69ce7a5af8",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-7f48912e257bae21",
+      "target": "sb-18b2371c97c53596",
+      "obligation_id": "o-41e725f905c61e67bddd",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-7f48912e257bae21",
+      "target": "sb-18b2371c97c53596",
+      "obligation_id": "o-76e23172fa632576b855",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-19914390b092baa4",
+      "target": "sb-2a7d53331d848a37",
+      "obligation_id": "o-75385e9528d566d09c00",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-19914390b092baa4",
+      "target": "sb-2a7d53331d848a37",
+      "obligation_id": "o-e090252c70bbd5161859",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-19914390b092baa4",
+      "target": "sb-2a7d53331d848a37",
+      "obligation_id": "o-237725d2d4bfaa726741",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-19914390b092baa4",
+      "target": "sb-2a7d53331d848a37",
+      "obligation_id": "o-49adcb544dc16f098427",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-19914390b092baa4",
+      "target": "sb-2a7d53331d848a37",
+      "obligation_id": "o-8d153f1f57c8c379e466",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2a7d53331d848a37",
+      "target": "sb-19914390b092baa4",
+      "obligation_id": "o-dc5f58b10c0d26b12b42",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2a7d53331d848a37",
+      "target": "sb-19914390b092baa4",
+      "obligation_id": "o-93153ad0516176978c4e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2a7d53331d848a37",
+      "target": "sb-19914390b092baa4",
+      "obligation_id": "o-ad934ad590fab4355686",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2a7d53331d848a37",
+      "target": "sb-19914390b092baa4",
+      "obligation_id": "o-d938b6e8a5c75f5faafd",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2a7d53331d848a37",
+      "target": "sb-19914390b092baa4",
+      "obligation_id": "o-5fbf8a3c1966817667d2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-20a9f19583fbe8b0",
+      "target": "sb-93a755613dd3d214",
+      "obligation_id": "o-4a7c063f866b27531dbf",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-20a9f19583fbe8b0",
+      "target": "sb-93a755613dd3d214",
+      "obligation_id": "o-3c34f3504b04c74c4db5",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-20a9f19583fbe8b0",
+      "target": "sb-93a755613dd3d214",
+      "obligation_id": "o-65fd0e05289b34aed02c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-20a9f19583fbe8b0",
+      "target": "sb-93a755613dd3d214",
+      "obligation_id": "o-436939f5a02a73fed09d",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-20a9f19583fbe8b0",
+      "target": "sb-93a755613dd3d214",
+      "obligation_id": "o-39974c5aa2824d809ce1",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-20a9f19583fbe8b0",
+      "target": "sb-93a755613dd3d214",
+      "obligation_id": "o-bf086bb056eeb4aea8fe",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-93a755613dd3d214",
+      "target": "sb-20a9f19583fbe8b0",
+      "obligation_id": "o-d65c04c46f2933925ce1",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-93a755613dd3d214",
+      "target": "sb-20a9f19583fbe8b0",
+      "obligation_id": "o-a0f05d42576a6a12ef81",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-93a755613dd3d214",
+      "target": "sb-20a9f19583fbe8b0",
+      "obligation_id": "o-5a8e8fa118cb8849cf96",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-93a755613dd3d214",
+      "target": "sb-20a9f19583fbe8b0",
+      "obligation_id": "o-e643d1fddf4580dbeedb",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-93a755613dd3d214",
+      "target": "sb-20a9f19583fbe8b0",
+      "obligation_id": "o-29ed5577e28b2864c348",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-93a755613dd3d214",
+      "target": "sb-20a9f19583fbe8b0",
+      "obligation_id": "o-a6616f7af76640cc6629",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-80b17e7258beb266a8e5",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-0f5b3b1724ba61050680",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-294b2cdced89f9d728cc",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-f9b20af8ffc6f2ca25f9",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-764f5a6e65703b5ad7fb",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-3659ebf225c911b8b06f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-088af0ffa4e1c1b8b583",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-9ac71dbcb5dae1947793",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-1b43f47aae86a51f2d00",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-47cb87c972ff09baba79",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-192f954ff8040f08e70a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-0f959518eed162c83741",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-c799fe722233d79c919d",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-4bda4a2f77d6b8c6ade6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-670752a00cbda1fd3051",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-e5b792c718de02570acc",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-1776b31065dc5d323b18",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-04ddaec8ea89820aa6d4",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-bed03a70d63ea76416bd",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-293422bc5462de0a",
+      "target": "sb-2edbf61e3221a20c",
+      "obligation_id": "o-b72a0dabbef41e0b1814",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-1dac35dd37ab9bc09d63",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-a4db61a3af5521cae5e5",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-25f0f95f0c08a251b39c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-81e06e502d9674c1b185",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-6696f11683094becebd6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-fe25ad0dd6f51c0e5007",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-09bdd9c287fd6afe1d08",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-aac17e4feafad2bf9426",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-9c0cbc17ace552b85ae8",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-63431d356d7af4010de3",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-a7bc8ddcfe3cbe359d62",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-b1dc025890a3a9703406",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-d5c5e2d291bf9c9155c4",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-ac0ed9aedb1460fa2501",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-b07a64ea4ad97d1739d5",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-3e3648020374aa47c020",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-b5418348f75f8144873a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-d70c61c9818f74dea816",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-77e8ea855ef9bbf14e9a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-2edbf61e3221a20c",
+      "target": "sb-293422bc5462de0a",
+      "obligation_id": "o-2be98564c509a82e69bc",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-36facfa49854bd9e",
+      "target": "sb-66e66065963f8a82",
+      "obligation_id": "o-361919e26356fa24fca5",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-36facfa49854bd9e",
+      "target": "sb-66e66065963f8a82",
+      "obligation_id": "o-4be191d66ad6807e935f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-36facfa49854bd9e",
+      "target": "sb-66e66065963f8a82",
+      "obligation_id": "o-7dbb346342671f22dcce",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-36facfa49854bd9e",
+      "target": "sb-66e66065963f8a82",
+      "obligation_id": "o-b3c710c3d7e39ee797f7",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-36facfa49854bd9e",
+      "target": "sb-66e66065963f8a82",
+      "obligation_id": "o-0ee31964ec713af11f81",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-36facfa49854bd9e",
+      "target": "sb-66e66065963f8a82",
+      "obligation_id": "o-4161d042e4bfba962244",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-36facfa49854bd9e",
+      "target": "sb-66e66065963f8a82",
+      "obligation_id": "o-297ca50db852086a2929",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-36facfa49854bd9e",
+      "target": "sb-66e66065963f8a82",
+      "obligation_id": "o-a06dd448522294796a46",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-36facfa49854bd9e",
+      "target": "sb-66e66065963f8a82",
+      "obligation_id": "o-4e50e511d3341e945c06",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-36facfa49854bd9e",
+      "target": "sb-66e66065963f8a82",
+      "obligation_id": "o-59176c83f3fb1c811543",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-36facfa49854bd9e",
+      "target": "sb-66e66065963f8a82",
+      "obligation_id": "o-5bbe9500390a56e1cd90",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-36facfa49854bd9e",
+      "target": "sb-66e66065963f8a82",
+      "obligation_id": "o-bff97c90a91ef3aa1bc9",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-36facfa49854bd9e",
+      "target": "sb-66e66065963f8a82",
+      "obligation_id": "o-411054981e20efc1f7dd",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-36facfa49854bd9e",
+      "target": "sb-66e66065963f8a82",
+      "obligation_id": "o-ddaa0a76dc4d4a9c8395",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-36facfa49854bd9e",
+      "target": "sb-66e66065963f8a82",
+      "obligation_id": "o-1dbeb72863c5001c4c77",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-36facfa49854bd9e",
+      "target": "sb-66e66065963f8a82",
+      "obligation_id": "o-1dbeb72863c5001c4c77",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-36facfa49854bd9e",
+      "target": "sb-66e66065963f8a82",
+      "obligation_id": "o-1dbeb72863c5001c4c77",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-36facfa49854bd9e",
+      "target": "sb-66e66065963f8a82",
+      "obligation_id": "o-1dbeb72863c5001c4c77",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-66e66065963f8a82",
+      "target": "sb-36facfa49854bd9e",
+      "obligation_id": "o-37d7641df75521fc0d6a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-66e66065963f8a82",
+      "target": "sb-36facfa49854bd9e",
+      "obligation_id": "o-3bc4ef71cc4783340ff1",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-66e66065963f8a82",
+      "target": "sb-36facfa49854bd9e",
+      "obligation_id": "o-1b05f3383444ed05a4c0",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-66e66065963f8a82",
+      "target": "sb-36facfa49854bd9e",
+      "obligation_id": "o-231abcc74d0e370e5d52",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-66e66065963f8a82",
+      "target": "sb-36facfa49854bd9e",
+      "obligation_id": "o-0807426645b39981b64b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-66e66065963f8a82",
+      "target": "sb-36facfa49854bd9e",
+      "obligation_id": "o-6c50dde81d0dd050f23b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-66e66065963f8a82",
+      "target": "sb-36facfa49854bd9e",
+      "obligation_id": "o-f51a1a4cd921ab8d19e3",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-66e66065963f8a82",
+      "target": "sb-36facfa49854bd9e",
+      "obligation_id": "o-8d2537d5aea888c24101",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-66e66065963f8a82",
+      "target": "sb-36facfa49854bd9e",
+      "obligation_id": "o-7cda01f9ce273ba5c796",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-66e66065963f8a82",
+      "target": "sb-36facfa49854bd9e",
+      "obligation_id": "o-8a16bfe63ea67e91dbb8",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-66e66065963f8a82",
+      "target": "sb-36facfa49854bd9e",
+      "obligation_id": "o-8acc2773d4de1b7c2b3b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-edf352b1a045ba365c62",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-5e6421d53e25a750b439",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-27c56d57c35eb75fa094",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-fd8c40be4502fe89baca",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-1444e067e9e82cbb84fa",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-5f3f12d932c355e9ab1a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-8c6ba06b7e0e855f8a5a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-f24e128c408da54d9c40",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-f3402610af5abe9bad97",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-8fcdc360823e27ed0043",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-b08429fff12ea2fadeb5",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-1918a0fa476b9b1258af",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-bd62eced8ab690c03473",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-e24b4ae7d55f34be0281",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-74104ee5f51346bfa192",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-618cc611c635fabdb3d5",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-79c7fc8e3ef916c96cfb",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-7d8045141efb1908f719",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-9be384d15be7f262c36f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-5ccfaf275946606ddb23",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-fc8f7d18fb8da212efb9",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-8284b2013bb5e943f765",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-cf9f64f7d709d816818e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-a7518053dc82434da820",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-c689633d840b36a6cf78",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-9822544a2dd479a5adf4",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-255801d467231e4116a3",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-c62f47bd535c8f47fb3b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-c62f47bd535c8f47fb3b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-b62ade8785540457eb95",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-931cbe2d7cb95a7843db",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-37f6bb57596d0032",
+      "target": "sb-ecccb8e02bc120d2",
+      "obligation_id": "o-3f6e995730ed7dd3dc8e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ecccb8e02bc120d2",
+      "target": "sb-37f6bb57596d0032",
+      "obligation_id": "o-82edfef97010bcefb13e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ecccb8e02bc120d2",
+      "target": "sb-37f6bb57596d0032",
+      "obligation_id": "o-448094fe11882038473d",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ecccb8e02bc120d2",
+      "target": "sb-37f6bb57596d0032",
+      "obligation_id": "o-3e13f00e6307f95b9196",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ecccb8e02bc120d2",
+      "target": "sb-37f6bb57596d0032",
+      "obligation_id": "o-51c0c086a47f25d09cd5",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ecccb8e02bc120d2",
+      "target": "sb-37f6bb57596d0032",
+      "obligation_id": "o-a5dee12efe8d0d7d6d48",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ecccb8e02bc120d2",
+      "target": "sb-37f6bb57596d0032",
+      "obligation_id": "o-efef725cb79df667c101",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ecccb8e02bc120d2",
+      "target": "sb-37f6bb57596d0032",
+      "obligation_id": "o-9a829484c9eddcb2d84e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ecccb8e02bc120d2",
+      "target": "sb-37f6bb57596d0032",
+      "obligation_id": "o-fa6d1c7fb095c8d85ead",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ecccb8e02bc120d2",
+      "target": "sb-37f6bb57596d0032",
+      "obligation_id": "o-611004280526a9ff2119",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ecccb8e02bc120d2",
+      "target": "sb-37f6bb57596d0032",
+      "obligation_id": "o-337b2e54914794c24c5c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ecccb8e02bc120d2",
+      "target": "sb-37f6bb57596d0032",
+      "obligation_id": "o-26c62ba7667cc5078a0b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ecccb8e02bc120d2",
+      "target": "sb-37f6bb57596d0032",
+      "obligation_id": "o-125458ff01fce44c02f7",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ecccb8e02bc120d2",
+      "target": "sb-37f6bb57596d0032",
+      "obligation_id": "o-2351129e9f812c033b93",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ecccb8e02bc120d2",
+      "target": "sb-37f6bb57596d0032",
+      "obligation_id": "o-a9599e5f775f68cc06c0",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ecccb8e02bc120d2",
+      "target": "sb-37f6bb57596d0032",
+      "obligation_id": "o-f3417c365dbad8dc378b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ecccb8e02bc120d2",
+      "target": "sb-37f6bb57596d0032",
+      "obligation_id": "o-b7e43e116492ae7bf073",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ecccb8e02bc120d2",
+      "target": "sb-37f6bb57596d0032",
+      "obligation_id": "o-2a6a13d4ae536aa1365c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ecccb8e02bc120d2",
+      "target": "sb-37f6bb57596d0032",
+      "obligation_id": "o-3f7987080803af31cd92",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3934e08097bd819e",
+      "target": "sb-a42cc11079303219",
+      "obligation_id": "o-539130d713af32cb3817",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3934e08097bd819e",
+      "target": "sb-a42cc11079303219",
+      "obligation_id": "o-7429240c42ca5b261534",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3934e08097bd819e",
+      "target": "sb-a42cc11079303219",
+      "obligation_id": "o-b94491b03f6e700dc605",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3934e08097bd819e",
+      "target": "sb-a42cc11079303219",
+      "obligation_id": "o-f789436a6c4e39be4a1a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3934e08097bd819e",
+      "target": "sb-a42cc11079303219",
+      "obligation_id": "o-ff1f971733b32e45b85e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3934e08097bd819e",
+      "target": "sb-a42cc11079303219",
+      "obligation_id": "o-e39fe52812dded9929ab",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3934e08097bd819e",
+      "target": "sb-a42cc11079303219",
+      "obligation_id": "o-0f410bffb019f64945e6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3934e08097bd819e",
+      "target": "sb-a42cc11079303219",
+      "obligation_id": "o-78a353b94475abe4745c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3934e08097bd819e",
+      "target": "sb-a42cc11079303219",
+      "obligation_id": "o-29e01b7f83d96e1833c4",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3934e08097bd819e",
+      "target": "sb-a42cc11079303219",
+      "obligation_id": "o-3834f26d11c1e6bc098d",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3934e08097bd819e",
+      "target": "sb-a42cc11079303219",
+      "obligation_id": "o-abc826c21a9c995c57fa",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3934e08097bd819e",
+      "target": "sb-a42cc11079303219",
+      "obligation_id": "o-f0c24fc76f29ee7d10fa",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3934e08097bd819e",
+      "target": "sb-a42cc11079303219",
+      "obligation_id": "o-2bf400235001b252eedf",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a42cc11079303219",
+      "target": "sb-3934e08097bd819e",
+      "obligation_id": "o-e447455fd641c913918f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a42cc11079303219",
+      "target": "sb-3934e08097bd819e",
+      "obligation_id": "o-4023b774fe1f171e52bc",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a42cc11079303219",
+      "target": "sb-3934e08097bd819e",
+      "obligation_id": "o-bcde9fa08021d54e86ed",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a42cc11079303219",
+      "target": "sb-3934e08097bd819e",
+      "obligation_id": "o-f4e272b246ef8b76a851",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a42cc11079303219",
+      "target": "sb-3934e08097bd819e",
+      "obligation_id": "o-55a00f6df7c6226abc17",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a42cc11079303219",
+      "target": "sb-3934e08097bd819e",
+      "obligation_id": "o-3074ac88790c5102b415",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a42cc11079303219",
+      "target": "sb-3934e08097bd819e",
+      "obligation_id": "o-201ef5344ef707e47834",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a42cc11079303219",
+      "target": "sb-3934e08097bd819e",
+      "obligation_id": "o-51541558845339ff7056",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a42cc11079303219",
+      "target": "sb-3934e08097bd819e",
+      "obligation_id": "o-6202dfa941d334515e61",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a42cc11079303219",
+      "target": "sb-3934e08097bd819e",
+      "obligation_id": "o-cd3c63a29ea0a2f2f6d2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a42cc11079303219",
+      "target": "sb-3934e08097bd819e",
+      "obligation_id": "o-96f32c3745cc46df66e9",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a42cc11079303219",
+      "target": "sb-3934e08097bd819e",
+      "obligation_id": "o-3d5240b67c30fd2bc0a6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a42cc11079303219",
+      "target": "sb-3934e08097bd819e",
+      "obligation_id": "o-f95933ec23bd10beca92",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3ecfd7a8c1b959aa",
+      "target": "sb-594e8819125aa903",
+      "obligation_id": "o-992d4a488542ee1d140f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3ecfd7a8c1b959aa",
+      "target": "sb-594e8819125aa903",
+      "obligation_id": "o-4f4c336e2ed4dddd60c6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3ecfd7a8c1b959aa",
+      "target": "sb-594e8819125aa903",
+      "obligation_id": "o-d2b226a9ba95e0a38b8b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3ecfd7a8c1b959aa",
+      "target": "sb-594e8819125aa903",
+      "obligation_id": "o-3b5ff44f5c09f91793c2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3ecfd7a8c1b959aa",
+      "target": "sb-594e8819125aa903",
+      "obligation_id": "o-118d7a7ca2133296b4ce",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3ecfd7a8c1b959aa",
+      "target": "sb-594e8819125aa903",
+      "obligation_id": "o-b08ebfaeff351d9dc764",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3ecfd7a8c1b959aa",
+      "target": "sb-594e8819125aa903",
+      "obligation_id": "o-8b7c0a5757e636369560",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3ecfd7a8c1b959aa",
+      "target": "sb-594e8819125aa903",
+      "obligation_id": "o-d9ac59cae79f952ab150",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3ecfd7a8c1b959aa",
+      "target": "sb-594e8819125aa903",
+      "obligation_id": "o-70825ab0ba28b795a3d8",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3ecfd7a8c1b959aa",
+      "target": "sb-594e8819125aa903",
+      "obligation_id": "o-c42d676705203b49c59a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3ecfd7a8c1b959aa",
+      "target": "sb-594e8819125aa903",
+      "obligation_id": "o-b62f5482589e6d78df6d",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3ecfd7a8c1b959aa",
+      "target": "sb-594e8819125aa903",
+      "obligation_id": "o-b4d3b5f8a786124631df",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3ecfd7a8c1b959aa",
+      "target": "sb-594e8819125aa903",
+      "obligation_id": "o-823eb2012f50d409c3dd",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-3ecfd7a8c1b959aa",
+      "target": "sb-594e8819125aa903",
+      "obligation_id": "o-e360244aadbf0108ab39",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-594e8819125aa903",
+      "target": "sb-3ecfd7a8c1b959aa",
+      "obligation_id": "o-13b3ca182fdc7336ea3a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-594e8819125aa903",
+      "target": "sb-3ecfd7a8c1b959aa",
+      "obligation_id": "o-0c6b3d396607f16302e6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-594e8819125aa903",
+      "target": "sb-3ecfd7a8c1b959aa",
+      "obligation_id": "o-ea6a4c446019d5f4f08c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-594e8819125aa903",
+      "target": "sb-3ecfd7a8c1b959aa",
+      "obligation_id": "o-5de221b1174d29f0fbd9",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-594e8819125aa903",
+      "target": "sb-3ecfd7a8c1b959aa",
+      "obligation_id": "o-d03af36c3420ff15f5da",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-594e8819125aa903",
+      "target": "sb-3ecfd7a8c1b959aa",
+      "obligation_id": "o-a2631968371651caa699",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-594e8819125aa903",
+      "target": "sb-3ecfd7a8c1b959aa",
+      "obligation_id": "o-095934d4e8e397e374f7",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-594e8819125aa903",
+      "target": "sb-3ecfd7a8c1b959aa",
+      "obligation_id": "o-493cf894f2dab01041b5",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-594e8819125aa903",
+      "target": "sb-3ecfd7a8c1b959aa",
+      "obligation_id": "o-62bf2dad67c5fec79f2f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-594e8819125aa903",
+      "target": "sb-3ecfd7a8c1b959aa",
+      "obligation_id": "o-3245ec893d7b196a0057",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-594e8819125aa903",
+      "target": "sb-3ecfd7a8c1b959aa",
+      "obligation_id": "o-e8fa1414bea146b5b203",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-594e8819125aa903",
+      "target": "sb-3ecfd7a8c1b959aa",
+      "obligation_id": "o-5fb623a50c91d0ef2e51",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-594e8819125aa903",
+      "target": "sb-3ecfd7a8c1b959aa",
+      "obligation_id": "o-b241afbabc01f001361a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-594e8819125aa903",
+      "target": "sb-3ecfd7a8c1b959aa",
+      "obligation_id": "o-32fd6e395ce184347a11",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-57b6e463024e22ba",
+      "target": "sb-821427ec4508dd18",
+      "obligation_id": "o-8fd7994263c0f2ed1327",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-57b6e463024e22ba",
+      "target": "sb-821427ec4508dd18",
+      "obligation_id": "o-cb64958b8948f0fe24d9",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-57b6e463024e22ba",
+      "target": "sb-821427ec4508dd18",
+      "obligation_id": "o-687512e08890bf7b6076",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-57b6e463024e22ba",
+      "target": "sb-821427ec4508dd18",
+      "obligation_id": "o-741966a3c4667a2eddd8",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-821427ec4508dd18",
+      "target": "sb-57b6e463024e22ba",
+      "obligation_id": "o-598756e5ec65d9e6de44",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-821427ec4508dd18",
+      "target": "sb-57b6e463024e22ba",
+      "obligation_id": "o-65ff7363405e76ca4ba9",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-821427ec4508dd18",
+      "target": "sb-57b6e463024e22ba",
+      "obligation_id": "o-92a9d09a204fcac01a50",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-821427ec4508dd18",
+      "target": "sb-57b6e463024e22ba",
+      "obligation_id": "o-2471c4a8f4e11e96a956",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-58c36e5830e8f53a",
+      "target": "sb-78143bd4c961098e",
+      "obligation_id": "o-115fbe9a0cceaab04cf2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-58c36e5830e8f53a",
+      "target": "sb-78143bd4c961098e",
+      "obligation_id": "o-76f06e2e33b2488fc4a2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-58c36e5830e8f53a",
+      "target": "sb-78143bd4c961098e",
+      "obligation_id": "o-d0e896fbe2c2146d924d",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-58c36e5830e8f53a",
+      "target": "sb-78143bd4c961098e",
+      "obligation_id": "o-527473791bd44b9c5548",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-58c36e5830e8f53a",
+      "target": "sb-78143bd4c961098e",
+      "obligation_id": "o-a3720dc932249b5f80b2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-58c36e5830e8f53a",
+      "target": "sb-78143bd4c961098e",
+      "obligation_id": "o-6a1fdebbcbf407261b67",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-58c36e5830e8f53a",
+      "target": "sb-78143bd4c961098e",
+      "obligation_id": "o-520a131d438625940984",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-58c36e5830e8f53a",
+      "target": "sb-78143bd4c961098e",
+      "obligation_id": "o-0053f1f86532a5deba13",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-78143bd4c961098e",
+      "target": "sb-58c36e5830e8f53a",
+      "obligation_id": "o-39209e23f73cfba49e42",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-78143bd4c961098e",
+      "target": "sb-58c36e5830e8f53a",
+      "obligation_id": "o-8f06432eaac287934a8f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-78143bd4c961098e",
+      "target": "sb-58c36e5830e8f53a",
+      "obligation_id": "o-a494202f5f0e10c668b3",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-78143bd4c961098e",
+      "target": "sb-58c36e5830e8f53a",
+      "obligation_id": "o-a700c90c29fbf6e0cc21",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-78143bd4c961098e",
+      "target": "sb-58c36e5830e8f53a",
+      "obligation_id": "o-96e3497287ea45a211b8",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-78143bd4c961098e",
+      "target": "sb-58c36e5830e8f53a",
+      "obligation_id": "o-871bd4bc435567a8405a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-6c1e53d09db9fbae",
+      "target": "sb-dfccf083bb302aa5",
+      "obligation_id": "o-0688ad1285c363abf1e7",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-6c1e53d09db9fbae",
+      "target": "sb-dfccf083bb302aa5",
+      "obligation_id": "o-883a84d3c41e205fceb3",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-6c1e53d09db9fbae",
+      "target": "sb-dfccf083bb302aa5",
+      "obligation_id": "o-c00bf6ec6c4b160d056e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-dfccf083bb302aa5",
+      "target": "sb-6c1e53d09db9fbae",
+      "obligation_id": "o-121401490218d271fd1b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-dfccf083bb302aa5",
+      "target": "sb-6c1e53d09db9fbae",
+      "obligation_id": "o-b28b92412190ce8c0231",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-dfccf083bb302aa5",
+      "target": "sb-6c1e53d09db9fbae",
+      "obligation_id": "o-5b5f00d93d03af696343",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-6d18429a6acd4293",
+      "target": "sb-e14439e07a9b09bd",
+      "obligation_id": "o-0284c0b46c5fdbc03b28",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-6d18429a6acd4293",
+      "target": "sb-e14439e07a9b09bd",
+      "obligation_id": "o-3f393007bf256dc66fba",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-6d18429a6acd4293",
+      "target": "sb-e14439e07a9b09bd",
+      "obligation_id": "o-e38d2aa1b84fcaf232dd",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-6d18429a6acd4293",
+      "target": "sb-e14439e07a9b09bd",
+      "obligation_id": "o-882dddecdc7d9d9cde8b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-6d18429a6acd4293",
+      "target": "sb-e14439e07a9b09bd",
+      "obligation_id": "o-dad6a34ca5bc3f6d1dd2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-6d18429a6acd4293",
+      "target": "sb-e14439e07a9b09bd",
+      "obligation_id": "o-5847e81a87e0e7e52111",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e14439e07a9b09bd",
+      "target": "sb-6d18429a6acd4293",
+      "obligation_id": "o-6c6844db7fefefba9079",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e14439e07a9b09bd",
+      "target": "sb-6d18429a6acd4293",
+      "obligation_id": "o-bbd2fb4cb5cc8d326662",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e14439e07a9b09bd",
+      "target": "sb-6d18429a6acd4293",
+      "obligation_id": "o-75f2d81cd00fa5303544",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e14439e07a9b09bd",
+      "target": "sb-6d18429a6acd4293",
+      "obligation_id": "o-6fa25633b98dbf9f44f7",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e14439e07a9b09bd",
+      "target": "sb-6d18429a6acd4293",
+      "obligation_id": "o-00da0bfc5afa74a8455d",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e14439e07a9b09bd",
+      "target": "sb-6d18429a6acd4293",
+      "obligation_id": "o-5ac60dbf99df13bf896c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-82211948a14ad896",
+      "target": "sb-9c622e44ebc1dbce",
+      "obligation_id": "o-8319925c0e367e992eb2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-82211948a14ad896",
+      "target": "sb-9c622e44ebc1dbce",
+      "obligation_id": "o-9f7366030c44bca44f2a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-82211948a14ad896",
+      "target": "sb-9c622e44ebc1dbce",
+      "obligation_id": "o-0c4cfce55eb69e57caee",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-82211948a14ad896",
+      "target": "sb-9c622e44ebc1dbce",
+      "obligation_id": "o-d78a599f60a734f67aad",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-82211948a14ad896",
+      "target": "sb-9c622e44ebc1dbce",
+      "obligation_id": "o-9d08aad7dd3c4da29430",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-82211948a14ad896",
+      "target": "sb-9c622e44ebc1dbce",
+      "obligation_id": "o-335cc0f2e9092bb796de",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9c622e44ebc1dbce",
+      "target": "sb-82211948a14ad896",
+      "obligation_id": "o-4a8241d6f964db11cc60",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9c622e44ebc1dbce",
+      "target": "sb-82211948a14ad896",
+      "obligation_id": "o-84e293827ff24d9a17a6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9c622e44ebc1dbce",
+      "target": "sb-82211948a14ad896",
+      "obligation_id": "o-2511bf8c17267f59dce7",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9c622e44ebc1dbce",
+      "target": "sb-82211948a14ad896",
+      "obligation_id": "o-eca024f715237dbb054f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9c622e44ebc1dbce",
+      "target": "sb-82211948a14ad896",
+      "obligation_id": "o-005ed69cc2d8f3c32058",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9c622e44ebc1dbce",
+      "target": "sb-82211948a14ad896",
+      "obligation_id": "o-9561edf1ebbbb4973d32",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9c622e44ebc1dbce",
+      "target": "sb-82211948a14ad896",
+      "obligation_id": "o-6ee5f6137ed08f80be4e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9c622e44ebc1dbce",
+      "target": "sb-82211948a14ad896",
+      "obligation_id": "o-9cb795e5a894e547bba6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-937f35816d39a8ee",
+      "target": "sb-b7e86433e409f4de",
+      "obligation_id": "o-1358200ccf0f297984b5",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-937f35816d39a8ee",
+      "target": "sb-b7e86433e409f4de",
+      "obligation_id": "o-635b56d45b22e10d78b0",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-937f35816d39a8ee",
+      "target": "sb-b7e86433e409f4de",
+      "obligation_id": "o-009dddab6dce5d095f4e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-937f35816d39a8ee",
+      "target": "sb-b7e86433e409f4de",
+      "obligation_id": "o-8df7becda56f40e1e969",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b7e86433e409f4de",
+      "target": "sb-937f35816d39a8ee",
+      "obligation_id": "o-0c45f5402ad450d42144",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b7e86433e409f4de",
+      "target": "sb-937f35816d39a8ee",
+      "obligation_id": "o-553260f99939e3ec35e4",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b7e86433e409f4de",
+      "target": "sb-937f35816d39a8ee",
+      "obligation_id": "o-753e81225124c5df6af1",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b7e86433e409f4de",
+      "target": "sb-937f35816d39a8ee",
+      "obligation_id": "o-45c05ae2f846a1320c71",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9500dc808ed32ac3",
+      "target": "sb-ee387bc669a1b4bc",
+      "obligation_id": "o-02fde87c55499c8ae66f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9500dc808ed32ac3",
+      "target": "sb-ee387bc669a1b4bc",
+      "obligation_id": "o-726b06f6b3ab883c0d42",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9500dc808ed32ac3",
+      "target": "sb-ee387bc669a1b4bc",
+      "obligation_id": "o-92cfbb92da36fe4640ca",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9500dc808ed32ac3",
+      "target": "sb-ee387bc669a1b4bc",
+      "obligation_id": "o-146b4471e958eefae85c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9500dc808ed32ac3",
+      "target": "sb-ee387bc669a1b4bc",
+      "obligation_id": "o-df3662a69f1248f5fbcf",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9500dc808ed32ac3",
+      "target": "sb-ee387bc669a1b4bc",
+      "obligation_id": "o-6ac85eecc8bde7b65c67",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9500dc808ed32ac3",
+      "target": "sb-ee387bc669a1b4bc",
+      "obligation_id": "o-d27470ccd2a52b37261c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ee387bc669a1b4bc",
+      "target": "sb-9500dc808ed32ac3",
+      "obligation_id": "o-3d0024077e1c1bf8e404",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ee387bc669a1b4bc",
+      "target": "sb-9500dc808ed32ac3",
+      "obligation_id": "o-2c805b3f205396864b4a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ee387bc669a1b4bc",
+      "target": "sb-9500dc808ed32ac3",
+      "obligation_id": "o-ab345836ea653ce28bf6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ee387bc669a1b4bc",
+      "target": "sb-9500dc808ed32ac3",
+      "obligation_id": "o-0cf3f59792b7a4766c1f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ee387bc669a1b4bc",
+      "target": "sb-9500dc808ed32ac3",
+      "obligation_id": "o-d4a0f3f201b4d17ae47f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ee387bc669a1b4bc",
+      "target": "sb-9500dc808ed32ac3",
+      "obligation_id": "o-2e76f1a6d5edadc3f645",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ee387bc669a1b4bc",
+      "target": "sb-9500dc808ed32ac3",
+      "obligation_id": "o-19b69d0eba3799c409ea",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9900c5ff6eeff208",
+      "target": "sb-b500086bb966c8ae",
+      "obligation_id": "o-4227862e2d4ba797fa06",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9900c5ff6eeff208",
+      "target": "sb-b500086bb966c8ae",
+      "obligation_id": "o-650cdefe222933f6fc88",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9900c5ff6eeff208",
+      "target": "sb-b500086bb966c8ae",
+      "obligation_id": "o-511cdf755b3f7337582d",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9900c5ff6eeff208",
+      "target": "sb-b500086bb966c8ae",
+      "obligation_id": "o-88ec08c6322293d00baa",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9900c5ff6eeff208",
+      "target": "sb-b500086bb966c8ae",
+      "obligation_id": "o-f200d9918f9a7b8cce8f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9900c5ff6eeff208",
+      "target": "sb-b500086bb966c8ae",
+      "obligation_id": "o-b86e6571d84a37354642",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-9900c5ff6eeff208",
+      "target": "sb-b500086bb966c8ae",
+      "obligation_id": "o-f04f98e356659fe916da",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b500086bb966c8ae",
+      "target": "sb-9900c5ff6eeff208",
+      "obligation_id": "o-a5c47b47308002cedf8e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b500086bb966c8ae",
+      "target": "sb-9900c5ff6eeff208",
+      "obligation_id": "o-93a3a2bc5315f4ed1fa3",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b500086bb966c8ae",
+      "target": "sb-9900c5ff6eeff208",
+      "obligation_id": "o-dacaabdb77d52802c1b1",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b500086bb966c8ae",
+      "target": "sb-9900c5ff6eeff208",
+      "obligation_id": "o-12dfb2b842d9e77f4289",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b500086bb966c8ae",
+      "target": "sb-9900c5ff6eeff208",
+      "obligation_id": "o-f4e1db51eb5c26d8a35a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b500086bb966c8ae",
+      "target": "sb-9900c5ff6eeff208",
+      "obligation_id": "o-fc17bb839704218b1b0d",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b500086bb966c8ae",
+      "target": "sb-9900c5ff6eeff208",
+      "obligation_id": "o-b1d99e4e706609767117",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a48f3d18890a23c1",
+      "target": "sb-c23a81b23ec6f7e4",
+      "obligation_id": "o-ca994aaf7739cdd764e3",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a48f3d18890a23c1",
+      "target": "sb-c23a81b23ec6f7e4",
+      "obligation_id": "o-b359a60eb32b4ac282d9",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a48f3d18890a23c1",
+      "target": "sb-c23a81b23ec6f7e4",
+      "obligation_id": "o-f719a8b96b03a5baa3eb",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a48f3d18890a23c1",
+      "target": "sb-c23a81b23ec6f7e4",
+      "obligation_id": "o-e3b222718c4583396af2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c23a81b23ec6f7e4",
+      "target": "sb-a48f3d18890a23c1",
+      "obligation_id": "o-22d69baf0930b3df5bef",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c23a81b23ec6f7e4",
+      "target": "sb-a48f3d18890a23c1",
+      "obligation_id": "o-85968d9add8fc941742a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c23a81b23ec6f7e4",
+      "target": "sb-a48f3d18890a23c1",
+      "obligation_id": "o-4abe63fe2e46bb023fb4",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c23a81b23ec6f7e4",
+      "target": "sb-a48f3d18890a23c1",
+      "obligation_id": "o-addfa5a24ffe5ca0050b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c23a81b23ec6f7e4",
+      "target": "sb-a48f3d18890a23c1",
+      "obligation_id": "o-982a0690def0b69b8535",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c23a81b23ec6f7e4",
+      "target": "sb-a48f3d18890a23c1",
+      "obligation_id": "o-4727285a02bb388a4506",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a86475960551b00b",
+      "target": "sb-ea4419f9a5e0590a",
+      "obligation_id": "o-e1bed4162698e838bdcf",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a86475960551b00b",
+      "target": "sb-ea4419f9a5e0590a",
+      "obligation_id": "o-f62eb939f1ebca6cc206",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a86475960551b00b",
+      "target": "sb-ea4419f9a5e0590a",
+      "obligation_id": "o-967911be84d1ab098265",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a86475960551b00b",
+      "target": "sb-ea4419f9a5e0590a",
+      "obligation_id": "o-68d4d7fabde88a9b876c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a86475960551b00b",
+      "target": "sb-ea4419f9a5e0590a",
+      "obligation_id": "o-cd6c6ca93c52706287cf",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a86475960551b00b",
+      "target": "sb-ea4419f9a5e0590a",
+      "obligation_id": "o-d5cd4b75708ca6a25a15",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a86475960551b00b",
+      "target": "sb-ea4419f9a5e0590a",
+      "obligation_id": "o-2dcc4d5d5f24103f96c1",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ea4419f9a5e0590a",
+      "target": "sb-a86475960551b00b",
+      "obligation_id": "o-ad3ee642f28f8bb08cfc",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ea4419f9a5e0590a",
+      "target": "sb-a86475960551b00b",
+      "obligation_id": "o-1de36e2a9ce990bc106e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ea4419f9a5e0590a",
+      "target": "sb-a86475960551b00b",
+      "obligation_id": "o-24d74807c48a97686b89",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ea4419f9a5e0590a",
+      "target": "sb-a86475960551b00b",
+      "obligation_id": "o-fff43b65a32ca26c781a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ea4419f9a5e0590a",
+      "target": "sb-a86475960551b00b",
+      "obligation_id": "o-16cab6217c02d29e29b1",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ea4419f9a5e0590a",
+      "target": "sb-a86475960551b00b",
+      "obligation_id": "o-c6ff2c5b15dac6b5f7c6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ea4419f9a5e0590a",
+      "target": "sb-a86475960551b00b",
+      "obligation_id": "o-ab726509d27142bab92b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ea4419f9a5e0590a",
+      "target": "sb-a86475960551b00b",
+      "obligation_id": "o-410b0aa6a35ee8170b4c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a8add80a8628c470",
+      "target": "sb-bd5b6335fa037588",
+      "obligation_id": "o-746de2bd85a5fdea468f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a8add80a8628c470",
+      "target": "sb-bd5b6335fa037588",
+      "obligation_id": "o-f2ca6093ac4c91fd8b98",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a8add80a8628c470",
+      "target": "sb-bd5b6335fa037588",
+      "obligation_id": "o-7da765dc1065f7b8cdf4",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a8add80a8628c470",
+      "target": "sb-bd5b6335fa037588",
+      "obligation_id": "o-7bfe2cd04934df406931",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a8add80a8628c470",
+      "target": "sb-bd5b6335fa037588",
+      "obligation_id": "o-8a4eb1c0c92b14d749d9",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-a8add80a8628c470",
+      "target": "sb-bd5b6335fa037588",
+      "obligation_id": "o-682ef1f2e9bef97612a5",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-bd5b6335fa037588",
+      "target": "sb-a8add80a8628c470",
+      "obligation_id": "o-f8d0f2f8f554c0f10049",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-bd5b6335fa037588",
+      "target": "sb-a8add80a8628c470",
+      "obligation_id": "o-93803cb34b8605256190",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-bd5b6335fa037588",
+      "target": "sb-a8add80a8628c470",
+      "obligation_id": "o-80703a31980a15780de8",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-bd5b6335fa037588",
+      "target": "sb-a8add80a8628c470",
+      "obligation_id": "o-d58ea48bb7dc8e600e91",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-bd5b6335fa037588",
+      "target": "sb-a8add80a8628c470",
+      "obligation_id": "o-80c8795eeb6eba145c48",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-bd5b6335fa037588",
+      "target": "sb-a8add80a8628c470",
+      "obligation_id": "o-5998585ccee44ac026f6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-bd5b6335fa037588",
+      "target": "sb-a8add80a8628c470",
+      "obligation_id": "o-bdc31028e338e8faa8d0",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b2cebca7ee5ffd6e",
+      "target": "sb-b4d8398a56f87c9c",
+      "obligation_id": "o-ce0a526f578668427d64",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b2cebca7ee5ffd6e",
+      "target": "sb-b4d8398a56f87c9c",
+      "obligation_id": "o-11d421be8e8efa082ce9",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b2cebca7ee5ffd6e",
+      "target": "sb-b4d8398a56f87c9c",
+      "obligation_id": "o-be010ff5c921ea256dd4",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b2cebca7ee5ffd6e",
+      "target": "sb-b4d8398a56f87c9c",
+      "obligation_id": "o-5b39f062826473a26251",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b2cebca7ee5ffd6e",
+      "target": "sb-b4d8398a56f87c9c",
+      "obligation_id": "o-4810a36044bc73227c75",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b2cebca7ee5ffd6e",
+      "target": "sb-b4d8398a56f87c9c",
+      "obligation_id": "o-8639965a98f0c30ca191",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b2cebca7ee5ffd6e",
+      "target": "sb-b4d8398a56f87c9c",
+      "obligation_id": "o-d5fb5ba221404933717e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b2cebca7ee5ffd6e",
+      "target": "sb-b4d8398a56f87c9c",
+      "obligation_id": "o-67bea5c7b5e102ba2082",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b2cebca7ee5ffd6e",
+      "target": "sb-b4d8398a56f87c9c",
+      "obligation_id": "o-1228c6240d8cc78f6167",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b2cebca7ee5ffd6e",
+      "target": "sb-b4d8398a56f87c9c",
+      "obligation_id": "o-0653ec0bf8b89be58cb8",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b2cebca7ee5ffd6e",
+      "target": "sb-b4d8398a56f87c9c",
+      "obligation_id": "o-4218b78edab425831a62",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b2cebca7ee5ffd6e",
+      "target": "sb-b4d8398a56f87c9c",
+      "obligation_id": "o-d229fab42d7371d7f419",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b2cebca7ee5ffd6e",
+      "target": "sb-b4d8398a56f87c9c",
+      "obligation_id": "o-dff8eac175099a323bf1",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b4d8398a56f87c9c",
+      "target": "sb-b2cebca7ee5ffd6e",
+      "obligation_id": "o-3da683d1ff60ff95607b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b4d8398a56f87c9c",
+      "target": "sb-b2cebca7ee5ffd6e",
+      "obligation_id": "o-43cd12f00d278cd8c19b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b4d8398a56f87c9c",
+      "target": "sb-b2cebca7ee5ffd6e",
+      "obligation_id": "o-fa9317fdf25bbefd1aa4",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b4d8398a56f87c9c",
+      "target": "sb-b2cebca7ee5ffd6e",
+      "obligation_id": "o-b22119ddc6b956c212c8",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b4d8398a56f87c9c",
+      "target": "sb-b2cebca7ee5ffd6e",
+      "obligation_id": "o-eaef8c4dc525b191eee8",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b4d8398a56f87c9c",
+      "target": "sb-b2cebca7ee5ffd6e",
+      "obligation_id": "o-ef4bfca0a52eaaf3446d",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b4d8398a56f87c9c",
+      "target": "sb-b2cebca7ee5ffd6e",
+      "obligation_id": "o-c5453c4bf0c14357f3d6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b4d8398a56f87c9c",
+      "target": "sb-b2cebca7ee5ffd6e",
+      "obligation_id": "o-67d1d0d9efc4719b0ad9",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b4d8398a56f87c9c",
+      "target": "sb-b2cebca7ee5ffd6e",
+      "obligation_id": "o-a965cf940e51ed2cc5c6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b4d8398a56f87c9c",
+      "target": "sb-b2cebca7ee5ffd6e",
+      "obligation_id": "o-bf694a3fb8a7e3d8fdc3",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b4d8398a56f87c9c",
+      "target": "sb-b2cebca7ee5ffd6e",
+      "obligation_id": "o-8143134d787f88f46b2e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b4d8398a56f87c9c",
+      "target": "sb-b2cebca7ee5ffd6e",
+      "obligation_id": "o-bb54582b7e28be7824c5",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-b4d8398a56f87c9c",
+      "target": "sb-b2cebca7ee5ffd6e",
+      "obligation_id": "o-0e3086b657a02155f9f4",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c49ae60c68354b38",
+      "target": "sb-cbb3903dad83d03c",
+      "obligation_id": "o-392773fee33fc78b23ac",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c49ae60c68354b38",
+      "target": "sb-cbb3903dad83d03c",
+      "obligation_id": "o-666d9eea660ca3ef50dc",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c49ae60c68354b38",
+      "target": "sb-cbb3903dad83d03c",
+      "obligation_id": "o-429a21ac0891544438f9",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c49ae60c68354b38",
+      "target": "sb-cbb3903dad83d03c",
+      "obligation_id": "o-8cc433311b2418c70d17",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c49ae60c68354b38",
+      "target": "sb-cbb3903dad83d03c",
+      "obligation_id": "o-83316cc0c4c14f6f25cc",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c49ae60c68354b38",
+      "target": "sb-cbb3903dad83d03c",
+      "obligation_id": "o-0c4faf7db87317620401",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c49ae60c68354b38",
+      "target": "sb-cbb3903dad83d03c",
+      "obligation_id": "o-bed53a2d624c0d4c1446",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c49ae60c68354b38",
+      "target": "sb-cbb3903dad83d03c",
+      "obligation_id": "o-13e5126d267a05fb2cc0",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c49ae60c68354b38",
+      "target": "sb-cbb3903dad83d03c",
+      "obligation_id": "o-0e4fd8c54f777fbb38e2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c49ae60c68354b38",
+      "target": "sb-cbb3903dad83d03c",
+      "obligation_id": "o-0e4fd8c54f777fbb38e2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c49ae60c68354b38",
+      "target": "sb-cbb3903dad83d03c",
+      "obligation_id": "o-0e4fd8c54f777fbb38e2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c49ae60c68354b38",
+      "target": "sb-cbb3903dad83d03c",
+      "obligation_id": "o-0e4fd8c54f777fbb38e2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c49ae60c68354b38",
+      "target": "sb-cbb3903dad83d03c",
+      "obligation_id": "o-0e4fd8c54f777fbb38e2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c49ae60c68354b38",
+      "target": "sb-cbb3903dad83d03c",
+      "obligation_id": "o-662575638806d8104be6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c49ae60c68354b38",
+      "target": "sb-cbb3903dad83d03c",
+      "obligation_id": "o-662575638806d8104be6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c49ae60c68354b38",
+      "target": "sb-cbb3903dad83d03c",
+      "obligation_id": "o-662575638806d8104be6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-cbb3903dad83d03c",
+      "target": "sb-c49ae60c68354b38",
+      "obligation_id": "o-f9a92f5fbdfba52d305a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-cbb3903dad83d03c",
+      "target": "sb-c49ae60c68354b38",
+      "obligation_id": "o-9f3d96667175dc131d7a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-cbb3903dad83d03c",
+      "target": "sb-c49ae60c68354b38",
+      "obligation_id": "o-3298c2f746fb108936c2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-cbb3903dad83d03c",
+      "target": "sb-c49ae60c68354b38",
+      "obligation_id": "o-2c8eec45414008bd88ba",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-cbb3903dad83d03c",
+      "target": "sb-c49ae60c68354b38",
+      "obligation_id": "o-842888ffd77347614b6b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-cbb3903dad83d03c",
+      "target": "sb-c49ae60c68354b38",
+      "obligation_id": "o-8b5c5979aee18727f66c",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c951cb7c1160f48e",
+      "target": "sb-f037f29809ad15d8",
+      "obligation_id": "o-87913e7c1e4b3e3dcee3",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c951cb7c1160f48e",
+      "target": "sb-f037f29809ad15d8",
+      "obligation_id": "o-02343d4a382564a3ebaf",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c951cb7c1160f48e",
+      "target": "sb-f037f29809ad15d8",
+      "obligation_id": "o-748e2babac2cfcfc016a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c951cb7c1160f48e",
+      "target": "sb-f037f29809ad15d8",
+      "obligation_id": "o-e8e9ffccc00bd1c48102",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c951cb7c1160f48e",
+      "target": "sb-f037f29809ad15d8",
+      "obligation_id": "o-dac416a4de2b69ce085d",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c951cb7c1160f48e",
+      "target": "sb-f037f29809ad15d8",
+      "obligation_id": "o-97c031bce972f9569dda",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c951cb7c1160f48e",
+      "target": "sb-f037f29809ad15d8",
+      "obligation_id": "o-9eda1fbd3f00c3e8ea20",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-c951cb7c1160f48e",
+      "target": "sb-f037f29809ad15d8",
+      "obligation_id": "o-c34f369753405db14122",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f037f29809ad15d8",
+      "target": "sb-c951cb7c1160f48e",
+      "obligation_id": "o-37ea839933de9521c224",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f037f29809ad15d8",
+      "target": "sb-c951cb7c1160f48e",
+      "obligation_id": "o-0038b1ec450dd050e071",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f037f29809ad15d8",
+      "target": "sb-c951cb7c1160f48e",
+      "obligation_id": "o-d1434c5132791ecbb6ef",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f037f29809ad15d8",
+      "target": "sb-c951cb7c1160f48e",
+      "obligation_id": "o-a3efd3f4c821e2422fc1",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f037f29809ad15d8",
+      "target": "sb-c951cb7c1160f48e",
+      "obligation_id": "o-2cb0272bc86d722a90c6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f037f29809ad15d8",
+      "target": "sb-c951cb7c1160f48e",
+      "obligation_id": "o-f18fe7f05cb6658b1971",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f037f29809ad15d8",
+      "target": "sb-c951cb7c1160f48e",
+      "obligation_id": "o-bc41164e9a8c9d9e8988",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ca40ac2f845aead4",
+      "target": "sb-ea8a692f1bc136f8",
+      "obligation_id": "o-bafb8075d50aafabb598",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ca40ac2f845aead4",
+      "target": "sb-ea8a692f1bc136f8",
+      "obligation_id": "o-ea7bfcb9e955ef2ed90b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ca40ac2f845aead4",
+      "target": "sb-ea8a692f1bc136f8",
+      "obligation_id": "o-b63a9c179402c6b59a68",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ca40ac2f845aead4",
+      "target": "sb-ea8a692f1bc136f8",
+      "obligation_id": "o-9c6c8b3b8ba2726cae6d",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ca40ac2f845aead4",
+      "target": "sb-ea8a692f1bc136f8",
+      "obligation_id": "o-313d6f148561cb2cb1bf",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ca40ac2f845aead4",
+      "target": "sb-ea8a692f1bc136f8",
+      "obligation_id": "o-02e47d587f6fc51f2764",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ca40ac2f845aead4",
+      "target": "sb-ea8a692f1bc136f8",
+      "obligation_id": "o-e876159a93461f619d6f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ca40ac2f845aead4",
+      "target": "sb-ea8a692f1bc136f8",
+      "obligation_id": "o-e3b1ce97eb3219fd6296",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ea8a692f1bc136f8",
+      "target": "sb-ca40ac2f845aead4",
+      "obligation_id": "o-2cea0bd99a6a7e10841a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ea8a692f1bc136f8",
+      "target": "sb-ca40ac2f845aead4",
+      "obligation_id": "o-12d1e035c70378c10aa0",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ea8a692f1bc136f8",
+      "target": "sb-ca40ac2f845aead4",
+      "obligation_id": "o-0dc1151da8d230f2c06f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ea8a692f1bc136f8",
+      "target": "sb-ca40ac2f845aead4",
+      "obligation_id": "o-987667a684c32b63d335",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ea8a692f1bc136f8",
+      "target": "sb-ca40ac2f845aead4",
+      "obligation_id": "o-7b70a4bfc7ec4eb74ea5",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ea8a692f1bc136f8",
+      "target": "sb-ca40ac2f845aead4",
+      "obligation_id": "o-184ef4d8b8d8765b6e44",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ea8a692f1bc136f8",
+      "target": "sb-ca40ac2f845aead4",
+      "obligation_id": "o-e5738d7fdd97d0b23802",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ea8a692f1bc136f8",
+      "target": "sb-ca40ac2f845aead4",
+      "obligation_id": "o-03d83d667d45cd7b41c6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-de9f06d522aed5f4",
+      "target": "sb-ed4744766dab4ccc",
+      "obligation_id": "o-01d3d7b82df4437038ba",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-de9f06d522aed5f4",
+      "target": "sb-ed4744766dab4ccc",
+      "obligation_id": "o-79c899b50de5a0862d08",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-de9f06d522aed5f4",
+      "target": "sb-ed4744766dab4ccc",
+      "obligation_id": "o-423235f612deb362bb80",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ed4744766dab4ccc",
+      "target": "sb-de9f06d522aed5f4",
+      "obligation_id": "o-de63d0f17ad2567db873",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ed4744766dab4ccc",
+      "target": "sb-de9f06d522aed5f4",
+      "obligation_id": "o-e4e25ba2e4f31272d5ab",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-ed4744766dab4ccc",
+      "target": "sb-de9f06d522aed5f4",
+      "obligation_id": "o-e9ff59c4c3304936b497",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e793af5ca9054cbc",
+      "target": "sb-e9c6e145c1ed4b46",
+      "obligation_id": "o-2ccd7e1101f997b9b43f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e793af5ca9054cbc",
+      "target": "sb-e9c6e145c1ed4b46",
+      "obligation_id": "o-fc49d217687b585124b4",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e793af5ca9054cbc",
+      "target": "sb-e9c6e145c1ed4b46",
+      "obligation_id": "o-cfe6bcff8d2db128f30f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e793af5ca9054cbc",
+      "target": "sb-e9c6e145c1ed4b46",
+      "obligation_id": "o-ebd8eceebd2bbeba7030",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e793af5ca9054cbc",
+      "target": "sb-e9c6e145c1ed4b46",
+      "obligation_id": "o-60682addc45ab7ae1379",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e793af5ca9054cbc",
+      "target": "sb-e9c6e145c1ed4b46",
+      "obligation_id": "o-32d5ca0e5bd8727972ad",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e793af5ca9054cbc",
+      "target": "sb-e9c6e145c1ed4b46",
+      "obligation_id": "o-f253e79d9a049af70c2b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e793af5ca9054cbc",
+      "target": "sb-e9c6e145c1ed4b46",
+      "obligation_id": "o-1aba6a2e9e977b80a914",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e793af5ca9054cbc",
+      "target": "sb-e9c6e145c1ed4b46",
+      "obligation_id": "o-42283cb2fb69977493c0",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e793af5ca9054cbc",
+      "target": "sb-e9c6e145c1ed4b46",
+      "obligation_id": "o-4ccbe5582f8036cc5a69",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e793af5ca9054cbc",
+      "target": "sb-e9c6e145c1ed4b46",
+      "obligation_id": "o-6f53d0293adbc5923255",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e793af5ca9054cbc",
+      "target": "sb-e9c6e145c1ed4b46",
+      "obligation_id": "o-ab9c3f29a6e5a3e4244e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e793af5ca9054cbc",
+      "target": "sb-e9c6e145c1ed4b46",
+      "obligation_id": "o-4d699ef27133bca7f6e0",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e793af5ca9054cbc",
+      "target": "sb-e9c6e145c1ed4b46",
+      "obligation_id": "o-be41990794c8cd37e424",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e793af5ca9054cbc",
+      "target": "sb-e9c6e145c1ed4b46",
+      "obligation_id": "o-20e4e4e082258dffd3e3",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e793af5ca9054cbc",
+      "target": "sb-e9c6e145c1ed4b46",
+      "obligation_id": "o-f8b1a65da83530f1948d",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e9c6e145c1ed4b46",
+      "target": "sb-e793af5ca9054cbc",
+      "obligation_id": "o-6f613568207ad826afb6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e9c6e145c1ed4b46",
+      "target": "sb-e793af5ca9054cbc",
+      "obligation_id": "o-99655c3ef9fa16bd37ee",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e9c6e145c1ed4b46",
+      "target": "sb-e793af5ca9054cbc",
+      "obligation_id": "o-aa222ff243667a93d982",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e9c6e145c1ed4b46",
+      "target": "sb-e793af5ca9054cbc",
+      "obligation_id": "o-efd62b934b63ccc94558",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e9c6e145c1ed4b46",
+      "target": "sb-e793af5ca9054cbc",
+      "obligation_id": "o-cf920557d73be9a5f721",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e9c6e145c1ed4b46",
+      "target": "sb-e793af5ca9054cbc",
+      "obligation_id": "o-de49054e7c04391fd74e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e9c6e145c1ed4b46",
+      "target": "sb-e793af5ca9054cbc",
+      "obligation_id": "o-f46c4ffc79d73061542e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e9c6e145c1ed4b46",
+      "target": "sb-e793af5ca9054cbc",
+      "obligation_id": "o-65bfa953d17ad875c802",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e9c6e145c1ed4b46",
+      "target": "sb-e793af5ca9054cbc",
+      "obligation_id": "o-7cd6f0d4641bade7d11f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e9c6e145c1ed4b46",
+      "target": "sb-e793af5ca9054cbc",
+      "obligation_id": "o-d22e99d83ba4bd7b465a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e9c6e145c1ed4b46",
+      "target": "sb-e793af5ca9054cbc",
+      "obligation_id": "o-543115ef27e903e9e206",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e9c6e145c1ed4b46",
+      "target": "sb-e793af5ca9054cbc",
+      "obligation_id": "o-ad37561f725d1035539e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e9c6e145c1ed4b46",
+      "target": "sb-e793af5ca9054cbc",
+      "obligation_id": "o-0cf988384f4daa1111a5",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e9c6e145c1ed4b46",
+      "target": "sb-e793af5ca9054cbc",
+      "obligation_id": "o-1efbc9e4bf23bf7cc53e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e9c6e145c1ed4b46",
+      "target": "sb-e793af5ca9054cbc",
+      "obligation_id": "o-0b1d88c891c4f6ce263b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e9c6e145c1ed4b46",
+      "target": "sb-e793af5ca9054cbc",
+      "obligation_id": "o-13b7f08e62d3a4a03926",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-c61598e4a609345cc7ce",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-8857325d6ae7b393a8ed",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-594de14aaeed3bb71afd",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-8018c056fb884da108fa",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-f929fed6db3be31b5a13",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-d445248f1a08c32a4e78",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-24116c38c2ea1c1536a6",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-453b461cf03232b45dfc",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-df950f8d6351901cd7ff",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-6e2c1f656b4e0f7303bc",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-a674f89b59475fc7ea91",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-4adb734e7d5acbed1e70",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-48d2e270624e40752427",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-c0048312abda4b64804e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-538e07b4484b7fea8263",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-d94a740ecb8aa320ec84",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-14833079f0d24b434145",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-e4f832beb15fba31c5b9",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-7d0ce05d4cd9391fc862",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-f7b0ae5bd8a003793144",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-b45b1e5b760bbcba96c2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-c721c221b1199abb46dd",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-df0765c820c32fed966f",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-12876100ce3bf01f2d3d",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-f6c26c138236962cc4a2",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-e833a554bbc7ee4e",
+      "target": "sb-f3af54bce1485c55",
+      "obligation_id": "o-e1ac2c4dd14ad3022680",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-5f13d2b7da5c1ca54cce",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-02fc330a113e32b68fac",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-6e046851a052a9ba59d9",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-4b45a57653f5bf5ffa03",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-fa2e59353525d6557518",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-3f02f5bfad166850d41a",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-510878a1f5290aceac48",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-a7999b98f70af1404e14",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-53ed7efbf1be277ac0bb",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-513e9aebeaea98e5da08",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-6236874eb1740e68f367",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-424104e6560bc5b082d7",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-b7f2f8eb2ae1b6d88545",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-dd249ce96e9fa6310ea9",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-ed51a5b497bf87852339",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-881422ddcfe83112158e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-bd4f9a782420feec2ca7",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-32bfb6b19be8b4425711",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-1c398561aa7df2303ab4",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-3fac313740754d6f2f6e",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-2f4b71fdbec6ab94c35b",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-c25c6ebf30071acf7ffd",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-ee7aeef4ad39187d18a8",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-3850b0bdeec8098dcf65",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-6f027c4e406cfb157a25",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    },
+    {
+      "source": "sb-f3af54bce1485c55",
+      "target": "sb-e833a554bbc7ee4e",
+      "obligation_id": "o-6b7637c6b500fbe281ec",
+      "szs_status": "Theorem",
+      "verdict": "proved"
+    }
+  ]
+}

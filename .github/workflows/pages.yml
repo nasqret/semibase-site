@@ -1,0 +1,63 @@
+# Build the census website from this repository and the semibase-order6
+# release it documents, check it, and publish it on GitHub Pages.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  # The release of semibase-order6 that the Lean links point to.
+  LEAN_REF: v1.0.0
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: nasqret/semibase-order6
+          ref: ${{ env.LEAN_REF }}
+          path: semibase-order6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          sudo apt-get install -y --no-install-recommends graphviz
+      - name: Build
+        run: python build.py
+        env:
+          SEMIBASE_REPO: semibase-order6
+      - name: Check the data against the tables
+        run: python check_data.py
+        env:
+          SEMIBASE_REPO: semibase-order6
+      - name: Check every page
+        run: python qa.py
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
