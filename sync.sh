@@ -15,7 +15,7 @@ gh run download "$run" --name github-pages --dir "$tmp"
 mkdir "$tmp/site"
 tar -xf "$tmp/artifact.tar" -C "$tmp/site"
 built=$(python3 -c 'import json, sys; r = json.load(open(sys.argv[1])); assert r["site_commit"] == sys.argv[2], r; print(r["content_sha256"])' "$tmp/site/build.json" "$head")
-rsync -rlz --delete --chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r "$tmp/site/" bnaskrecki@lts-faculty.wmi.amu.edu.pl:public_html/semigroups6/
+rsync -rlpz --delete --chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r "$tmp/site/" bnaskrecki@lts-faculty.wmi.amu.edu.pl:public_html/semigroups6/
 status=0
 for url in https://nasqret.github.io/semibase-site https://bnaskrecki.faculty.wmi.amu.edu.pl/semigroups6; do
   live=$(curl -fsS "$url/build.json?t=$(date +%s)" | python3 -c 'import json, sys; print(json.load(sys.stdin)["content_sha256"])' || echo none)
