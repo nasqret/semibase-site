@@ -1,4 +1,4 @@
-// SemiBase census: the inclusion graph of the 505 varieties, on the varieties page.
+// SemiBase census: the inclusion graph of the varieties, on the varieties page.
 // Each variety is drawn below the varieties that contain it, and a line joins it to each variety directly
 // above it. The layout comes from Graphviz (dot) with the data in graph-data.js, which is loaded when the
 // graph is first shown. Selecting a variety colours everything above and below it; the view "around" it
@@ -15,12 +15,14 @@
   var btnAll = document.getElementById("g-all"), btnAround = document.getElementById("g-around");
   var stepsSel = document.getElementById("g-steps"), btnFull = document.getElementById("g-full");
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var NONFINITE = [3843, 8564, 8878, 13747];
+  var NONFINITE = [3843, 8564, 8878, 13747];       // of order six
+  var NAMED = { "l": [6, 3843], "b21": [6, 8564], "b2^1": [6, 8564], "a2g": [6, 8878], "a2^g": [6, 8878],
+                "a21": [6, 13747], "a2^1": [6, 13747], "c8": [6, 3842], "b2": [5, 415], "a2": [5, 868] };
   var DX = 90, DY = 110, READABLE = 0.72;  // spacing of the view around a variety, and a scale at which it reads well
 
   var G = null, loading = false, pending = null;
-  var N = 0, E = 0, name = [], gx, gy, rad, gens, members, up = [], down = [], edgeLo, edgeHi, edgeD = [];
-  var byName = {}, undecided = [];
+  var N = 0, E = 0, name = [], label = [], gx, gy, rad, gens, members, up = [], down = [], edgeLo, edgeHi, edgeD = [];
+  var byName = {};
   var GLOBAL = null, L = null, paths = {};
   var view = { s: 1, x: 0, y: 0 }, cssW = 0, cssH = 0, dpr = 1, fitted = false;
   var mode = "all", steps = 2, sel = -1, hover = -1, group = null, cone = null;
@@ -30,9 +32,9 @@
 
   function parseHash() {
     var h = decodeURIComponent(window.location.hash.slice(1));
-    var m = /^graph(?:=(\d+))?(?:&around=(\d+|all))?$/.exec(h);
+    var m = /^graph(?:=([\w-]+))?(?:&around=(\d+|all))?$/.exec(h);
     if (!m) return null;
-    return { sel: m[1] ? parseInt(m[1], 10) : null, around: m[2] ? (m[2] === "all" ? 0 : parseInt(m[2], 10)) : null };
+    return { sel: m[1] || null, around: m[2] ? (m[2] === "all" ? 0 : parseInt(m[2], 10)) : null };
   }
 
   function route() {
@@ -53,6 +55,7 @@
 
   function applyHash(h) {
     if (h.around !== null && [0, 1, 2, 3].indexOf(h.around) >= 0) { steps = h.around; stepsSel.value = String(steps); }
+    if (h.sel !== null && byName[h.sel] === undefined && G.alias[h.sel]) h.sel = G.alias[h.sel];
     if (h.sel !== null && byName[h.sel] !== undefined) {
       mode = h.around !== null ? "around" : "all";
       select(byName[h.sel], true);
@@ -78,16 +81,15 @@
     gens = new Int32Array(N); members = new Int32Array(N);
     edgeLo = new Int32Array(E); edgeHi = new Int32Array(E);
     G.nodes.forEach(function (n, i) {
-      name[i] = n[0]; gx[i] = n[1]; gy[i] = n[2]; rad[i] = n[3]; gens[i] = n[4]; members[i] = n[5];
+      name[i] = n[0]; gx[i] = n[1]; gy[i] = n[2]; rad[i] = n[3]; gens[i] = n[4]; members[i] = n[5]; label[i] = n[6];
       byName[n[0]] = i; up[i] = []; down[i] = [];
     });
     G.edges.forEach(function (e, j) {
       edgeLo[j] = e[0]; edgeHi[j] = e[1]; edgeD[j] = e[2];
       up[e[0]].push(e[1]); down[e[1]].push(e[0]);
     });
-    up.forEach(function (list) { list.sort(function (a, b) { return name[a] - name[b]; }); });
-    down.forEach(function (list) { list.sort(function (a, b) { return name[a] - name[b]; }); });
-    undecided = G.undecided;
+    up.forEach(function (list) { list.sort(function (a, b) { return a - b; }); });
+    down.forEach(function (list) { list.sort(function (a, b) { return a - b; }); });
     GLOBAL = { x: gx, y: gy, vis: null, curve: false };
   }
 
@@ -231,16 +233,6 @@
     } else {
       stroke(paths.all, colors.edge, 1, Math.min(0.9, Math.max(0.45, 0.35 + view.s)));
     }
-    ctx.globalAlpha = 0.9;
-    ctx.setLineDash([5 / view.s, 4 / view.s]);
-    ctx.strokeStyle = colors.muted;
-    ctx.lineWidth = 1.5 / view.s;
-    undecided.forEach(function (p) {                // shown when one of the two is selected
-      if (sel !== p[0] && sel !== p[1]) return;
-      if (L.vis && (!L.vis[p[0]] || !L.vis[p[1]])) return;
-      ctx.beginPath(); ctx.moveTo(L.x[p[0]], L.y[p[0]]); ctx.lineTo(L.x[p[1]], L.y[p[1]]); ctx.stroke();
-    });
-    ctx.setLineDash([]);
     var fills = [colors.node, colors.accent, colors.good, colors.warn];
     for (var g = 0; g < 4; g++) {
       ctx.beginPath();
@@ -279,7 +271,7 @@
       if (!(all || i === sel || i === hover || (few && group[i]))) continue;
       var sx = L.x[i] * view.s + view.x, sy = L.y[i] * view.s + view.y;
       if (sx < -80 || sy < -20 || sx > cssW + 20 || sy > cssH + 20) continue;
-      var text = "V[" + name[i] + "]", r = nodeR(i) * view.s, tx = sx + r + 4, ty = sy;
+      var text = label[i], r = nodeR(i) * view.s, tx = sx + r + 4, ty = sy;
       ctx.textAlign = "left";
       if (L.curve && i !== sel) {      // around a variety: names above the larger ones, below the smaller ones
         ctx.textAlign = "center";
@@ -409,33 +401,30 @@
   function plural(n, word, words) { return fmt(n) + " " + (n === 1 ? word : (words || word + "s")); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]; }); }
 
-  function chips(label, list, cls) {
+  function chips(title, list, cls) {
     if (!list.length) return "";
-    return "<p>" + label + " (" + list.length + "):</p><div class=\"chips\">" + list.map(function (u) {
-      return "<button type=\"button\" class=\"" + cls + "\" data-i=\"" + u + "\">V[" + name[u] + "]</button>";
+    return "<p>" + title + " (" + list.length + "):</p><div class=\"chips\">" + list.map(function (u) {
+      return "<button type=\"button\" class=\"" + cls + "\" data-i=\"" + u + "\">" + label[u] + "</button>";
     }).join("") + "</div>";
   }
 
   function showInfo(i) {
     var above = 0, below = 0;
     for (var j = 0; j < N; j++) { if (cone[j] === 2) above++; else if (cone[j] === 3) below++; }
-    var basis = G.bases[i], open = [];
-    undecided.forEach(function (p) {
-      if (p[0] === i) open.push("whether V[" + name[i] + "] lies in V[" + name[p[1]] + "]");
-      if (p[1] === i) open.push("whether V[" + name[p[0]] + "] lies in V[" + name[i] + "]");
-    });
+    var basis = G.bases[i].slice(1), k = G.bases[i][0];
     info.innerHTML = "<button type=\"button\" class=\"close\" aria-label=\"Close\">×</button>" +
-      "<h3><a href=\"v/" + name[i] + ".html\">V[" + name[i] + "]</a></h3>" +
-      "<p>" + plural(gens[i], "semigroup") + " of order six generate" + (gens[i] === 1 ? "s" : "") + " it; " +
-      plural(members[i], "semigroup") + " of order six lie" + (members[i] === 1 ? "s" : "") + " in it.</p>" +
+      "<h3><a href=\"v/" + name[i] + ".html\">" + label[i] + "</a></h3>" +
+      "<p>" + plural(gens[i], "semigroup") + " of order at most six generate" + (gens[i] === 1 ? "s" : "") + " it; " +
+      plural(members[i], "semigroup") + " of order at most six lie" + (members[i] === 1 ? "s" : "") + " in it." +
+      (G.nodes[i][7] === i ? " It is self-dual." : " Its dual is " + label[G.nodes[i][7]] + ".") + "</p>" +
       "<p>" + (above ? "It lies in " + plural(above, "other variety", "other varieties") : "It is maximal") + " and " +
-      (below ? "contains " + plural(below, "other", "others") : "is minimal") + " among the 505.</p>" +
-      "<p><b>Shortest known basis</b>, " + plural(basis.length, "identity", "identities") + ":</p>" +
+      (below ? "contains " + plural(below, "other", "others") : "is minimal") + " among the " + fmt(N) + ".</p>" +
+      "<p><b>Basis in the fewest variables</b>, " + plural(basis.length, "identity", "identities") + " in " +
+      plural(k, "variable") + ":</p>" +
       "<ol class=\"basis\">" + basis.map(function (e) { return "<li>" + esc(e) + "</li>"; }).join("") + "</ol>" +
       chips("Directly above", up[i], "up") + chips("Directly below", down[i], "down") +
-      (open.length ? "<p class=\"note\">Undecided: " + open.join("; ") + ".</p>" : "") +
       "<div class=\"actions\"><a class=\"btn\" href=\"v/" + name[i] + ".html\">Variety page</a>" +
-      "<a class=\"btn\" href=\"browse.html?variety=" + name[i] + "\">Its generators</a>" +
+      "<a class=\"btn\" href=\"browse.html?variety=" + name[i] + "\">Semigroups generating it</a>" +
       (mode === "around" ? "<button type=\"button\" class=\"btn\" data-act=\"all\">Whole order</button>"
                          : "<button type=\"button\" class=\"btn\" data-act=\"around\">Around it</button>") + "</div>";
     info.hidden = false;
@@ -460,11 +449,7 @@
 
   function relation(i) {
     if (sel < 0 || i === sel) return "";
-    var a = "V[" + name[i] + "]", b = "V[" + name[sel] + "]";
-    for (var j = 0; j < undecided.length; j++) {
-      var p = undecided[j];
-      if ((p[0] === i && p[1] === sel) || (p[1] === i && p[0] === sel)) return "; undecided whether it lies in the other";
-    }
+    var a = label[i], b = label[sel];
     if (cone[i] === 2) return "; contains " + b;
     if (cone[i] === 3) return "; lies in " + b;
     return "; " + a + " and " + b + " are not comparable";
@@ -472,7 +457,7 @@
 
   function showTip(i, px, py) {
     if (i < 0) { tip.hidden = true; return; }
-    tip.textContent = "V[" + name[i] + "]: " + plural(gens[i], "generator") + ", " + plural(members[i], "semigroup") + relation(i);
+    tip.textContent = label[i] + ": " + plural(gens[i], "generator") + ", " + plural(members[i], "semigroup") + relation(i);
     tip.hidden = false;
     var w = tip.offsetWidth, h = tip.offsetHeight;
     tip.style.left = Math.max(4, Math.min(cssW - w - 4, px + 14)) + "px";
@@ -608,21 +593,42 @@
     if (box.classList.contains("full") && !(e.state && e.state.sbFull)) setFull(false, true);
   });
 
+  // A variety by its name ("V[5, 540]ᵒᵖ", "5-540-op", "7390"), or the variety of a semigroup ("[6, 3842]", "C8").
+  function classIndex(n, k) {
+    var i = 0;
+    for (var m = 1; m < n; m++) i += G.orders[m - 1];
+    return i + k - 1;
+  }
+
   form.addEventListener("submit", function (e) {
     e.preventDefault();
     if (!G) return;
-    var q = input.value.trim(), t = q.toLowerCase().replace(/[\s_₂¹ᵍ₈]/g, function (c) {
+    var q = input.value.trim(), t = q.toLowerCase().replace(/ᵒᵖ/g, "op").replace(/[\s_₂¹ᵍ₈]/g, function (c) {
       return { "₂": "2", "¹": "1", "ᵍ": "g", "₈": "8" }[c] || "";
     });
-    var named = { "l": 3843, "b21": 8564, "b2^1": 8564, "a2g": 8878, "a2^g": 8878, "a21": 13747, "a2^1": 13747, "c8": 3842 }[t];
-    var m = /(\d+)\D*$/.exec(q), k = named || (m ? parseInt(m[1], 10) : NaN);
-    if (!(k >= 1 && k <= 15973)) { say("Enter a variety V[k], or a semigroup [6, k] with k from 1 to 15,973.", 4000); return; }
-    if (NONFINITE.indexOf(k) >= 0) { say("[6, " + k + "] has no finite basis; it lies in none of the 505 varieties.", 5000); return; }
-    var i = byName[k];
-    if (i === undefined) {
-      i = parseInt(G.cls.substr(2 * (k - 1), 2), 36);
-      say("[6, " + k + "] generates V[" + name[i] + "].", 4000);
-    } else say("");
+    var v = /^v\[?(?:(\d)[,\-])?(\d+)\]?-?(op)?$/.exec(t) || /^(?:(\d)-)?(\d+)-(op)$/.exec(t);
+    if (v) {
+      var slug = (v[1] && v[1] !== "6" ? v[1] + "-" : "") + v[2] + (v[3] ? "-op" : "");
+      if (byName[slug] === undefined && G.alias[slug]) slug = G.alias[slug];
+      if (byName[slug] !== undefined) { say(""); input.blur(); select(byName[slug], true); return; }
+    }
+    var s = NAMED[t] || /^(?:s|\[|\()?(\d)[,\-](\d+)[\])]?$/.exec(q.toLowerCase().replace(/[\s_]/g, function (c) {
+      return c === "_" ? "," : "";
+    }));
+    var n, k;
+    if (s && s.length === 2) { n = s[0]; k = s[1]; }
+    else if (s) { n = parseInt(s[1], 10); k = parseInt(s[2], 10); }
+    else { var m = /(\d+)\D*$/.exec(q); n = 6; k = m ? parseInt(m[1], 10) : NaN; }
+    if (!(n >= 1 && n <= 6 && k >= 1 && k <= G.orders[n - 1])) {
+      say("Enter a variety V[n, k], or a semigroup [n, k] of order n at most six.", 4000);
+      return;
+    }
+    if (n === 6 && NONFINITE.indexOf(k) >= 0) {
+      say("[6, " + k + "] has no finite basis; it lies in none of the " + fmt(N) + " varieties.", 5000);
+      return;
+    }
+    var i = parseInt(G.cls.substr(2 * classIndex(n, k), 2), 36);
+    say("[" + n + ", " + k + "] generates " + label[i] + ".", 4000);
     input.blur();
     select(i, true);
   });

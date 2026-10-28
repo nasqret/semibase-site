@@ -1,5 +1,6 @@
 # Build the census website from this repository and the semibase-order6
-# release it documents, check it, and publish it on GitHub Pages.
+# release it documents, check it, and publish it on GitHub Pages. sync.sh then
+# copies the same artifact to the faculty server.
 name: Pages
 
 on:
@@ -51,6 +52,8 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
+          # kept so that sync.sh can copy the same files to the faculty server
+          retention-days: 90
 
   deploy:
     needs: build

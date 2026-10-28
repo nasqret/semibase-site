@@ -1,27 +1,17 @@
 #!/usr/bin/env python3
-"""Build the SemiBase census: a static website about the semigroups of order six.
+"""Build the SemiBase census: a static website about the semigroups of orders one to six and their identity bases.
 
-One page per semigroup (site/s/<k>.html) with its Cayley table, properties,
-shortest known identity basis or the proof that none is finite, the Lean proof,
-its variety and related semigroups; one page per variety (site/v/<k>.html); one
-page per certified basis (site/b/<id>.html); and overview pages. The site is
-plain HTML with a little JavaScript for search and filtering, and works when
-opened from disk.
+One page per semigroup (site/s/<k>.html for [6, k], site/s/<n>-<k>.html for [n, k] with n at most five) with its
+Cayley table, its structure, its bases or the proof that none is finite, its Lean theorem, the variety it generates
+and related semigroups; one page per variety (site/v/<name>.html), counting a variety and its dual separately; one
+page per certified basis (site/b/<id>.html); and overview pages. The site is plain HTML with a little JavaScript,
+and works when opened from disk.
 
-Inputs, from the semibase-order6 repository:
-  research/order6/catalogue.json GAP Smallsemi 0.7.2: the 15,973 classes of order six
-  provenance/final-census-map.json  the endpoint theorem of each class
-and from the bases-min seal of M. Janota (data/):
-  sealed-bases-v1.json           the certified basis of every finitely based class, read
-                                 back from the Lean theorems by the bases-min seal
-  reduced-forms-v1.json          each certified basis with the identities that follow from
-                                 the others removed (Vampire)
-  order-v2.json                  the 505 varieties and their inclusions (Vampire)
-  census-rows-v1.json            for each basis, the classes of order six in which it holds
-  graph-layout.json              the Graphviz layout of the graph of varieties (a cache)
-The repository is a checkout of semibase-order6 (SEMIBASE_REPO, default
-../semibase-order6); its Lean sources give the line of every theorem and the
-code each proof needs, and its commit is the one the Lean links point to.
+The data comes from census.py (classes, bases, the pool of tables and its rows, the varieties and their order) and
+from data/: the bases reduced by Vampire, the bases in few variables found by prep/fewvars.py, the lower bounds of
+prep/variable_bounds.py and the names of the database of Araújo et al. The Lean sources of a checkout of
+semibase-order6 (SEMIBASE_REPO, default ../semibase-order6) give the line of every theorem and the code each proof
+needs, and its commit is the one the Lean links point to.
 
 Usage: python3 build.py, then open site/index.html.
 """
@@ -40,18 +30,27 @@ from collections import Counter, defaultdict
 
 import numpy as np
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-DATA = os.path.join(HERE, "data")
+import census as C
+from census import (CLASSES, CLASS_BASIS, CLASS_VAR, CLASS_VAR_OP, COUNT, BASIS, BASIS_CLASSES, LOWER, MODELS,
+                    NONFINITE, NV, REDUCED, SELF_DUAL, TABLE, VARIETIES, UP, DOWN, canonical_basis, nvars, oriented,
+                    reverse, size, load, log)
+
+HERE = C.HERE
+DATA = C.DATA
 OUT = os.path.join(HERE, "site")
-REPO = os.path.abspath(os.environ.get("SEMIBASE_REPO", os.path.join(HERE, "..", "semibase-order6")))
+REPO = C.REPO
 REPO_URL = "https://github.com/nasqret/semibase-order6"
+SITE_URL = "https://github.com/nasqret/semibase-site"
+DOI = "10.5281/zenodo.23109225"
+SGV_URL = "https://www.sgv.dm.fct.unl.pt/"
 PAPER = "Proving at Scale for Universal Algebra, MATH-AI workshop, NeurIPS 2026"
-N = 15973
+N6 = COUNT[6]
+NLOW = sum(COUNT[n] for n in range(1, 6))
 CAS_PREFIX = "SemigroupBasis.Generated.Order6CASExplicitSourceUpstream."
 
-NONFINITE = {
+NONFINITE_NAMES = {
     3843: ("L", "Lee's semigroup L"),
-    8564: ("B₂¹", "the Brandt monoid B₂¹"),
+    8564: ("B₂¹", "the Brandt monoid B₂¹, obtained from B₂ by adjoining an identity"),
     8878: ("A₂ᵍ", "the semigroup A₂ᵍ, obtained from A₂ by adjoining an element g"),
     13747: ("A₂¹", "the monoid A₂¹, obtained from A₂ by adjoining an identity"),
 }
@@ -73,10 +72,17 @@ NONFINITE_DETAIL = {
             "No derivation step with an identity in fewer variables changes the left side at all.",
             "A. N. Trahtman (1987); M. V. Sapir (1988)"),
 }
-NAMED = {3842: ("C₈", "the semigroup C₈ of Section 19 of Lee and Zhang (2015)")}
+NAMED = {
+    (6, 3842): ("C₈", "the semigroup C₈ of Section 19 of Lee and Zhang (2015)"),
+    (5, 415): ("B₂", "the Brandt semigroup B₂; adjoining an identity gives B₂¹, which has no finite basis"),
+    (5, 868): ("A₂", "the semigroup A₂; adjoining an identity gives A₂¹, which has no finite basis"),
+}
+for _k, (_short, _long) in NONFINITE_NAMES.items():
+    NAMED[(6, _k)] = (_short, _long)
+SEARCH_NAMES = {"l": "3843", "b21": "8564", "b2^1": "8564", "a2g": "8878", "a2^g": "8878", "a21": "13747",
+                "a2^1": "13747", "c8": "3842", "b2": "5-415", "a2": "5-868"}
 
-# Proof kinds, by the module of the endpoint theorem; the first matching prefix wins.
-# The names follow the glossary "Reading the names" of the repository README.
+# Proof kinds of order six, by the module of the endpoint theorem; the first matching prefix wins.
 TRANSFER = ("A semigroup S with a certified basis lies in the variety of this one, {how}, and this "
             "semigroup satisfies the basis of S. Then every identity of this semigroup holds in S and "
             "follows from the basis, so the basis of S is a basis here too.")
@@ -116,8 +122,14 @@ KINDS = [
      "A proof written for this semigroup or a few semigroups, outside the generated and the family proofs."),
     (("SemigroupBasis.Nonfinite.",), "no finite basis", "A proof that no finite basis exists."),
 ]
-KIND_NAMES = list(dict.fromkeys(name for _, name, _ in KINDS))
-# Short forms for the overview table of the About page.
+LOWER_KINDS = {
+    "transfer": TRANSFER.format(how="as a subsemigroup, a quotient, or in a direct power of this one"),
+    "inflation": "This semigroup is an inflation of a smaller one, and the proof adapts the basis of that one.",
+    "family proof": "One basis is proved once to derive every identity of every semigroup of a family; on each "
+                    "table only the identities of the basis are checked, by computation.",
+    "direct proof": "A proof for this semigroup alone, or generated for it, that derives every identity of the "
+                    "semigroup from the basis.",
+}
 KIND_SUMMARY = {
     "transfer from order ≤ 5": "S has order at most five and is a subsemigroup of this one (the final sweep of these "
                                "transfers, and earlier waves)",
@@ -135,24 +147,34 @@ KIND_SUMMARY = {
     "wrapper": "thin wrappers that restate proofs made earlier",
     "individual proof": "proofs written for one semigroup or a few, among them C₈",
     "no finite basis": "the four proofs that no finite basis exists",
+    "transfer": "S, another semigroup of order at most five, lies in the variety of this one and the basis of S holds "
+                "here",
+    "direct proof": "a proof for this semigroup alone, or generated for it",
 }
 
 LETTERS = list("xyztuvwsrpqabcdefghijklmno")
 SUP = str.maketrans("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹")
-TODAY = datetime.date.today().isoformat()
 DIGITS = "0123456789abcdefghijklmnopqrstuvwxyz"
+OP = "ᵒᵖ"
 ASSET_VERSION = {}       # file name in assets/ -> a hash of its content, appended to its address
-# Browsers that support it fetch a page of the site when the pointer rests on a link to it.
 SPECULATION = '{"prefetch":[{"where":{"selector_matches":"a[href$=\'.html\']"},"eagerness":"moderate"}]}'
+ORDER_WORD = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six"}
+
+
+def git_out(*args, cwd=HERE):
+    try:
+        return subprocess.run(["git", "-C", cwd, *args], capture_output=True, text=True, check=True).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        return ""
+
+
+# The build date is the date of the commit of this repository, so that a build of a commit is the same everywhere.
+SITE_COMMIT = git_out("rev-parse", "HEAD")
+TODAY = git_out("log", "-1", "--format=%cs") or datetime.date.today().isoformat()
 
 
 def esc(text):
     return html.escape(str(text), quote=True)
-
-
-def load(name, folder=DATA):
-    with open(os.path.join(folder, name), encoding="utf-8") as handle:
-        return json.load(handle)
 
 
 def plural(n, word, words=None):
@@ -161,10 +183,6 @@ def plural(n, word, words=None):
 
 def verb(n, singular, plural_form):
     return singular if n == 1 else plural_form
-
-
-def log(message):
-    print(message, file=sys.stderr, flush=True)
 
 
 def b36(n, width):
@@ -184,76 +202,152 @@ def bits_hex(numbers):
     return format(sum(1 << (k - 1) for k in numbers), "x")
 
 
-# ===================================================================== data
-
-catalogue = load("research/order6/catalogue.json", REPO)
-TABLE, SELF_DUAL = {}, {}
-for record in catalogue["semigroups"]:
-    TABLE[record["smallsemi_id"][1]] = record["table"]
-    SELF_DUAL[record["smallsemi_id"][1]] = record["self_dual"]
-assert sorted(TABLE) == list(range(1, N + 1))
-
-BASIS, BASIS_CLASSES, CLASS_BASIS, CLASS_RECORD = {}, {}, {}, {}
-for basis in load("sealed-bases-v1.json")["bases"]:
-    BASIS[basis["basis_id"]] = basis["identities"]
-    BASIS_CLASSES[basis["basis_id"]] = sorted(int(c["semigroup_id"][3:]) for c in basis["classes"])
-    for record in basis["classes"]:
-        k = int(record["semigroup_id"][3:])
-        CLASS_BASIS[k] = basis["basis_id"]
-        CLASS_RECORD[k] = record
-assert len(CLASS_BASIS) == N - len(NONFINITE) and not set(CLASS_BASIS) & set(NONFINITE)
-
-REDUCED = load("reduced-forms-v1.json")["forms"]
-ORDER = load("order-v2.json")
-THEORY_BASES = {t["theory"]: t["bases"] for t in ORDER["theories"]}
-BASIS_THEORY = {b: t for t, bases in THEORY_BASES.items() for b in bases}
-ROWS = load("census-rows-v1.json")["rows"]
-CENSUS_MAP = load("provenance/final-census-map.json", REPO)
+# ===================================================================== names and links
 
 
-def members_of(hexstring):
-    value = int(hexstring, 16)          # bit k-1 is set when the basis holds in [6, k]
-    return [m + 1 for m in range(N) if (value >> m) & 1]
+def sslug(key):
+    n, k = key
+    return str(k) if n == 6 else f"{n}-{k}"
 
 
-GENS = {t: sorted(k for b in bases for k in BASIS_CLASSES[b]) for t, bases in THEORY_BASES.items()}
-VNAME = {t: GENS[t][0] for t in THEORY_BASES}     # a variety is named after its smallest generator
-CLASS_THEORY = {k: BASIS_THEORY[b] for k, b in CLASS_BASIS.items()}
-MEMBER_HEX, CONTAINS = {}, {}
-for t, bases in THEORY_BASES.items():
-    assert len({ROWS[b] for b in bases}) == 1, "equivalent bases with different models"
-    MEMBER_HEX[t] = ROWS[bases[0]]
-    CONTAINS[t] = members_of(ROWS[bases[0]])
-    assert set(GENS[t]) <= set(CONTAINS[t])
-IN_VARIETIES = Counter(k for t in THEORY_BASES for k in CONTAINS[t])
-
-UP, DOWN = defaultdict(set), defaultdict(set)
-for a, b in ORDER["cover_edges"]:       # theory a derives theory b: the variety of a lies in that of b
-    UP[a].add(b)
-    DOWN[b].add(a)
-    assert set(CONTAINS[a]) <= set(CONTAINS[b])
+def slabel(n, k, o=0):
+    return f"[{n}, {k}]" + (OP if o else "")
 
 
-def size(e):
-    return len(e["lhs"]) + len(e["rhs"])
+def slink(key, root="../", o=0, named=True):
+    n, k = key
+    name = NAMED.get(key, (None,))[0] if named and not o else None
+    label = slabel(n, k, o) + (f" {name}" if name else "")
+    cls = ' class="nfb"' if n == 6 and k in NONFINITE else ""
+    return f'<a href="{root}s/{sslug(key)}.html"{cls}>{esc(label)}</a>'
 
 
-def shortest(t):
-    """The reduced form with the fewest identities, then the fewest letters, among the variety's bases."""
-    def key(b):
-        ids = REDUCED[b]["identities"]
-        return (len(ids), sum(size(e) for e in ids), b)
-    b = min(THEORY_BASES[t], key=key)
-    return b, REDUCED[b]
+def sglink(s, root="../"):
+    """A link to a semigroup up to isomorphism: a table, or the transpose of a class that is not self-dual."""
+    return slink(s[:2], root, o=s[2])
 
 
-SHORTEST = {t: shortest(t) for t in THEORY_BASES}
+def vlabel(v):
+    return VARIETIES[v]["label"]
+
+
+def vlink(v, root="../"):
+    return f'<a href="{root}v/{VARIETIES[v]["slug"]}.html">{esc(vlabel(v))}</a>'
+
+
+def blink(b, root="../"):
+    return f'<a href="{root}b/{b}.html">{plural(len(BASIS[b]), "identity", "identities")}</a>'
+
+
+def links(items):
+    return f'<div class="links">{" ".join(items)}</div>'
+
+
+def sets_attr(semigroups):
+    """A list of semigroups as bit sets, one per order and orientation, for site.js to draw when opened."""
+    groups = defaultdict(list)
+    for n, k, o in semigroups:
+        groups[(n, o)].append(k)
+    return " ".join(f"{n}:{o}:{bits_hex(ks)}" for (n, o), ks in sorted(groups.items(), key=lambda x: (-x[0][0], x[0][1])))
+
+
+def semigroup_list(semigroups, root="../", inline=150):
+    if len(semigroups) <= inline:
+        return links([sglink(s, root) for s in semigroups])
+    return (f'<details data-sets="{sets_attr(semigroups)}" data-root="{root}"><summary>Show all {len(semigroups):,}'
+            f'</summary><div class="links"></div></details>')
+
+
+def by_order(semigroups):
+    counts = Counter(s[0] for s in semigroups)
+    return ", ".join(f"{counts[n]:,} of order {n}" for n in sorted(counts, reverse=True))
+
+
+# ===================================================================== bases of the varieties
+
+log("bases of the varieties ...")
+FEW = load("few-variables-v1.json")["results"] if os.path.exists(os.path.join(DATA, "few-variables-v1.json")) else []
+FEW_BY = defaultdict(list)
+for result in FEW:
+    FEW_BY[result["variety"]].append(result)
+BOUNDS = {b["variety"]: b for b in load("variable-bounds-v1.json")["bounds"]}
+SGV = {}
+for entry in load("sgv-names-v1.json")["names"]:
+    SGV[C.MODEL_VAR[C.LABELS.index(entry["generator"])]] = entry
+
+
+def candidates(v):
+    """Every known basis of V_v: the certified ones, their reduced forms, and the results of the search."""
+    found = {}
+
+    def add(kind, ids, **info):
+        key = canonical_basis(ids)
+        if key not in found:
+            found[key] = dict(kind=kind, identities=ids, **info)
+
+    for i in VARIETIES[v]["gens"]:
+        n, k, o = MODELS[i]
+        b = CLASS_BASIS[(n, k)]
+        add("certified", oriented(BASIS[b], o), basis=b, orientation=o)
+        if b in REDUCED:
+            add("reduced", oriented(REDUCED[b]["identities"], o), basis=b, orientation=o,
+                status=REDUCED[b]["status"])
+    var, dual = VARIETIES[v], VARIETIES[VARIETIES[v]["dual"]]
+    for source, flip in ((var, 0), (dual, 1)):
+        for result in FEW_BY.get(source["slug"], []):
+            if result["kind"] not in ("search", "reduce"):
+                continue
+            derives = dict(result["derives"])
+            derives["orientation"] ^= flip
+            add(result["kind"], oriented(result["basis"], flip), derives=derives, method=result.get("method"))
+    return list(found.values())
+
+
+def total(ids):
+    return sum(size(e) for e in ids)
+
+
+CANDIDATES = {v: candidates(v) for v in range(NV)}
+FEWEST_IDS = {v: min(CANDIDATES[v], key=lambda c: (len(c["identities"]), total(c["identities"]),
+                                                   nvars(c["identities"]))) for v in range(NV)}
+FEWEST_VARS = {v: min(CANDIDATES[v], key=lambda c: (nvars(c["identities"]), len(c["identities"]),
+                                                    total(c["identities"]))) for v in range(NV)}
+# Lower bounds on the number of variables: a table of the pool (prep/variable_bounds.py), or a larger semigroup
+# found by Vampire's model builder (prep/fewvars.py, mode refute), whichever bound is higher.
+BOUND_INFO = {v: dict(BOUNDS[VARIETIES[v]["slug"]]) for v in range(NV)}
+_cm_path = os.path.join(DATA, "countermodels-v1.json")
+for entry in (load("countermodels-v1.json")["models"] if os.path.exists(_cm_path) else []):
+    v = C.SLUG[entry["variety"]]
+    for w, flip in ((v, False), (VARIETIES[v]["dual"], True)):
+        model = [list(row) for row in zip(*entry["table"])] if flip else entry["table"]
+        violates = reverse(entry["violates"]) if flip else entry["violates"]
+        if entry["k"] + 1 > BOUND_INFO[w]["lower_bound"]:
+            BOUND_INFO[w] = {"variety": VARIETIES[w]["slug"], "lower_bound": entry["k"] + 1, "k": entry["k"],
+                             "model": model, "violates": violates}
+LOWER_BOUND = {v: BOUND_INFO[v]["lower_bound"] for v in range(NV)}
+OPTIMAL = {v: LOWER_BOUND[v] == nvars(FEWEST_VARS[v]["identities"]) for v in range(NV)}
+for v in range(NV):
+    assert LOWER_BOUND[v] <= nvars(FEWEST_VARS[v]["identities"]), VARIETIES[v]["slug"]
+GENS = {v: C.generators(v) for v in range(NV)}
+MEMBERS = {v: C.members(v) for v in range(NV)}
+IN_VARIETIES = Counter()
+for v in range(NV):
+    for s in MEMBERS[v]:
+        IN_VARIETIES[s] += 1
+# The names the varieties had when the census listed only the representatives of order six.
+OLD_NAME = {}
+for v in range(NV):
+    reps = [MODELS[i][1] for i in VARIETIES[v]["gens"] if MODELS[i][0] == 6 and MODELS[i][2] == 0]
+    if reps:
+        OLD_NAME[v] = min(reps)
+MOVED = {OLD_NAME[v]: v for v in OLD_NAME if VARIETIES[v]["slug"] != str(OLD_NAME[v])}
 
 # =============================================================== structure
 
 
 def properties(table):
-    S = range(1, 7)
+    n = len(table)
+    S = range(1, n + 1)
 
     def m(a, b):
         return table[a - 1][b - 1]
@@ -263,7 +357,7 @@ def properties(table):
     one = next((e for e in S if all(m(e, x) == x == m(x, e) for x in S)), None)
     comm = all(m(a, b) == m(b, a) for a in S for b in S)
     nil = 0
-    if zero is not None:
+    if zero is not None and n > 1:
         power, degree = set(S), 1
         while len(power) > 1:
             following = {m(a, b) for a in power for b in S}
@@ -283,31 +377,34 @@ def properties(table):
                 return found
             found |= new
 
-    rank = next(sub for r in range(1, 7) for sub in itertools.combinations(S, r) if len(generated(sub)) == 6)
+    rank = next(sub for r in range(1, n + 1) for sub in itertools.combinations(S, r) if len(generated(sub)) == n)
     ideals = {frozenset({a} | {m(a, x) for x in S} | {m(x, a) for x in S} | {m(m(x, a), y) for x in S for y in S})
               for a in S}
-    return {"idem": idem, "zero": zero, "one": one, "comm": comm, "band": len(idem) == 6, "nil": nil,
-            "regular": regular, "inverse": inverse, "group": group, "rank": rank, "jclasses": len(ideals),
-            "left_zero": all(m(a, b) == a for a in S for b in S),
+    cyclic = group and any(len(generated((a,))) == n for a in S)
+    return {"n": n, "idem": idem, "zero": zero, "one": one, "comm": comm, "band": len(idem) == n, "nil": nil,
+            "regular": regular, "inverse": inverse, "group": group, "cyclic": cyclic, "rank": rank,
+            "jclasses": len(ideals), "left_zero": all(m(a, b) == a for a in S for b in S),
             "right_zero": all(m(a, b) == b for a in S for b in S)}
 
 
 log("properties ...")
-PROPS = {k: properties(TABLE[k]) for k in range(1, N + 1)}
+PROPS = {key: properties(TABLE[key]) for key in CLASSES}
 
 log("nearby tables ...")
-ARRAY = np.array([sum(TABLE[k], []) for k in range(1, N + 1)], dtype=np.uint8)
-NEAR = defaultdict(list)      # k -> [(j, [(row, column), ...])], tables that differ in one or two entries
-for i in range(N):
-    distance = np.count_nonzero(ARRAY != ARRAY[i], axis=1)
-    for j in np.nonzero((distance > 0) & (distance <= 2))[0]:
-        cells = [(int(c) // 6 + 1, int(c) % 6 + 1) for c in np.nonzero(ARRAY[i] != ARRAY[j])[0]]
-        NEAR[i + 1].append((int(j) + 1, cells))
+NEAR = defaultdict(list)      # key -> [(other key, [(row, column), ...])]: tables that differ in one or two entries
+for n in C.ORDERS:
+    keys = [(n, k) for k in range(1, COUNT[n] + 1)]
+    array = np.array([sum(TABLE[key], []) for key in keys], dtype=np.uint8)
+    for i in range(len(keys)):
+        distance = np.count_nonzero(array != array[i], axis=1)
+        for j in np.nonzero((distance > 0) & (distance <= 2))[0]:
+            cells = [(int(c) // n + 1, int(c) % n + 1) for c in np.nonzero(array[i] != array[j])[0]]
+            NEAR[keys[i]].append((keys[int(j)], cells))
 
 # ================================================================ Lean code
 
-COMMIT = subprocess.run(["git", "-C", REPO, "rev-parse", "HEAD"], capture_output=True, text=True,
-                        check=True).stdout.strip()
+COMMIT = git_out("rev-parse", "HEAD", cwd=REPO)
+assert COMMIT, f"no git checkout of semibase-order6 at {REPO}"
 IMPORT = re.compile(r"^\s*import\s+(.+)$")
 DECL = re.compile(r"^\s*(?:@\[[^\]]*\]\s*)*(?:(?:private|protected|noncomputable|nonrec|partial|unsafe|public)\s+)*"
                   r"(?:theorem|lemma|def|abbrev|instance|opaque)\s+([^\s:({\[]+)")
@@ -349,9 +446,12 @@ MODULES = sorted(FILES)
 INDEX = {m: i for i, m in enumerate(MODULES)}
 LINES = np.zeros(len(MODULES), dtype=np.int64)
 GRAPH = {}
+FILE_SHA = {}
 for m in MODULES:
-    with open(os.path.join(REPO, FILES[m]), encoding="utf-8") as handle:
-        text = handle.read()
+    with open(os.path.join(REPO, FILES[m]), "rb") as handle:
+        raw = handle.read()
+    FILE_SHA[FILES[m]] = hashlib.sha256(raw).hexdigest()
+    text = raw.decode("utf-8")
     LINES[INDEX[m]] = text.count("\n")
     GRAPH[m] = [i for i in header_imports(text[:50000]) if i in FILES]
 sys.setrecursionlimit(100000)
@@ -443,6 +543,17 @@ def kind_of(module):
     raise ValueError(module)
 
 
+def lower_kind(module):
+    tail = module.split(".")[-1]
+    if "Inflation" in tail:
+        return "inflation"
+    if "Transfers" in tail or "Extensions" in tail:
+        return "transfer"
+    if module.startswith("SemigroupBasis.CoRoots.") or "Family" in tail:
+        return "family proof"
+    return "direct proof"
+
+
 def census_ref(k):
     path = f"SemiBase/Census/Shard{(k - 1) // 150 + 1:03d}.lean"
     return path, lean_line(path, f"SemiBase.Census.S6_{k}")
@@ -454,24 +565,45 @@ def catalogue_ref(k):
 
 
 log("locating the theorems ...")
-ENDPOINT = {}        # k -> (path, line, theorem name, module as recorded)
-for k in range(1, N + 1):
+CENSUS_MAP = load("provenance/final-census-map.json", REPO)
+ENDPOINT = {}        # k -> (path, line, theorem name, module as recorded), order six
+for k in range(1, N6 + 1):
     if k in NONFINITE:
         point = CENSUS_MAP["non_finitely_based"][f"S6_{k}"]
         module, name = point["module"], point["name"]
     else:
-        module, name = CLASS_RECORD[k]["module"], CLASS_RECORD[k]["theorem"]
+        module, name = C.RECORD6[k]["module"], C.RECORD6[k]["theorem"]
     path = FILES[lean_module(module)]
     ENDPOINT[k] = (path, lean_line(path, name), name, module)
 MISSING = [k for k, value in ENDPOINT.items() if value[1] is None]
-SIZE = {k: proof_size(lean_module(ENDPOINT[k][3])) for k in range(1, N + 1)}
+LOWER_ENDPOINT = {}  # (n, k) -> dict, orders one to five
+for key, record in LOWER.items():
+    path = FILES.get(record["module"])
+    line = lean_line(path, record["theorem"]) if path else None
+    recorded = {f["path"]: f["sha256"] for f in record["source_files"]}
+    LOWER_ENDPOINT[key] = {"path": path if line else None, "line": line, "theorem": record["theorem"],
+                           "module": record["module"], "type": record["type"], "opposite": record["opposite_theorem"],
+                           "same": bool(line) and recorded.get(path) == FILE_SHA.get(path),
+                           "kind": lower_kind(record["module"])}
+PUBLIC_LOWER = sum(1 for e in LOWER_ENDPOINT.values() if e["path"])
+SIZE, KIND, OWN = {}, {}, {}
+for k in range(1, N6 + 1):
+    SIZE[(6, k)] = proof_size(lean_module(ENDPOINT[k][3]))
+    KIND[(6, k)] = "no finite basis" if k in NONFINITE else kind_of(ENDPOINT[k][3])[0]
+for key, e in LOWER_ENDPOINT.items():
+    SIZE[key] = proof_size(e["module"]) if e["path"] else (0, 0)
+    KIND[key] = e["kind"]
 # Code of its own: the lines of the files that the proof of this class uses and the proof of no other class does.
-_classes_of_module = Counter(lean_module(ENDPOINT[k][3]) for k in range(1, N + 1))
-_masks = {m: closure_mask(m) for m in _classes_of_module}
-_uses = sum(mask.astype(np.int64) * count for m, (mask, count) in
-            ((m, (_masks[m], c)) for m, c in _classes_of_module.items()))
-OWN = {k: int(LINES[_masks[lean_module(ENDPOINT[k][3])] & (_uses == 1)].sum()) for k in range(1, N + 1)}
-KIND = {k: "no finite basis" if k in NONFINITE else kind_of(ENDPOINT[k][3])[0] for k in range(1, N + 1)}
+_modules = Counter(lean_module(ENDPOINT[k][3]) for k in range(1, N6 + 1))
+_modules.update(e["module"] for e in LOWER_ENDPOINT.values() if e["path"])
+_masks = {m: closure_mask(m) for m in _modules}
+_uses = sum(mask.astype(np.int64) * _modules[m] for m, mask in _masks.items())
+for k in range(1, N6 + 1):
+    OWN[(6, k)] = int(LINES[_masks[lean_module(ENDPOINT[k][3])] & (_uses == 1)].sum())
+for key, e in LOWER_ENDPOINT.items():
+    OWN[key] = int(LINES[_masks[e["module"]] & (_uses == 1)].sum()) if e["path"] else 0
+KIND_NAMES = list(dict.fromkeys([name for _, name, _ in KINDS] + list(LOWER_KINDS)))
+KIND_NAMES = [name for name in KIND_NAMES if name in set(KIND.values())]
 
 # ============================================================== formatting
 
@@ -501,15 +633,21 @@ def basis_list(ids):
     return f'<ol class="{cls}">' + "".join(f"<li>{esc(fmt_identity(e))}</li>" for e in ids) + "</ol>"
 
 
+def vars_text(ids):
+    k = nvars(ids)
+    return f"{plural(len(ids), 'identity', 'identities')} in {plural(k, 'variable')}"
+
+
 def cayley(table, props, highlight=()):
-    head = "<tr><th>·</th>" + "".join(f"<th>{b}</th>" for b in range(1, 7)) + "</tr>"
+    n = len(table)
+    head = "<tr><th>·</th>" + "".join(f"<th>{b}</th>" for b in range(1, n + 1)) + "</tr>"
     body = []
-    for a in range(1, 7):
+    for a in range(1, n + 1):
         cells = []
-        for b in range(1, 7):
+        for b in range(1, n + 1):
             value = table[a - 1][b - 1]
             cls = ["diff"] if (a, b) in highlight else []
-            if props["zero"] is not None and value == props["zero"] and not cls:
+            if props["zero"] is not None and value == props["zero"] and not cls and n > 1:
                 cls.append("zero")
             if a == b and value == a:
                 cls.append("idem")
@@ -518,35 +656,101 @@ def cayley(table, props, highlight=()):
     return f'<table class="cayley">{head}{"".join(body)}</table>'
 
 
-def slink(k, root="../", named=True):
-    name = NONFINITE.get(k, NAMED.get(k, (None,)))[0] if named else None
-    label = f"[6, {k}]" + (f" {name}" if name else "")
-    cls = ' class="nfb"' if k in NONFINITE else ""
-    return f'<a href="{root}s/{k}.html"{cls}>{esc(label)}</a>'
-
-
-def vlink(t, root="../"):
-    return f'<a href="{root}v/{VNAME[t]}.html">V[{VNAME[t]}]</a>'
-
-
-def blink(b, root="../"):
-    return f'<a href="{root}b/{b}.html">{plural(len(BASIS[b]), "identity", "identities")}</a>'
-
-
-def links(items):
-    return f'<div class="links">{" ".join(items)}</div>'
-
-
-def status_badge(form):
-    return ('<span class="badge fb">irredundant</span>' if form["status"] == "irredundant"
-            else '<span class="badge plain">reduced</span>')
-
-
 STATUS_NOTE = {
     "irredundant": "Irredundant: none of these identities follows from the others; for each, a semigroup "
                    "satisfies the others but not it.",
     "candidate_reduced": "Reduced as far as the search went: some identity may still follow from the others.",
 }
+
+
+def provenance(c, v):
+    """What is known about a basis, and on what it rests."""
+    kind = c["kind"]
+    if kind == "certified":
+        users = BASIS_CLASSES[c["basis"]]
+        whose = (f"the Lean theorem of {slink(users[0])} proves" if len(users) == 1 else
+                 f"the Lean theorems of {plural(len(users), 'semigroup')} prove")
+        if c["orientation"]:
+            return (f"Certified in Lean, read backwards: {whose} that the reversed identities are a basis, and "
+                    f"reading a basis backwards gives a basis of the transposed table.")
+        return f"Certified in Lean: {whose} that these identities are a basis."
+    if kind == "reduced":
+        note = STATUS_NOTE[c["status"]]
+        return (f"{note} Obtained from a basis certified in Lean by removing identities that follow from the others, "
+                f"with the prover Vampire; the equivalence rests on Vampire's proofs, not on Lean.")
+    if kind == "reduce":
+        return ("The certified basis without the identities that follow from the others, by the prover Vampire; "
+                "the equivalence rests on Vampire's proofs, not on Lean.")
+    if kind == "search":
+        d = c["derives"]
+        what = "a certified basis" if d["kind"] == "certified" else "a reduced form of a certified basis"
+        return (f"Found by a search among the identities of the variety in {plural(nvars(c['identities']), 'variable')}: "
+                f"they hold in its generator, and Vampire derives from them {what}, so they are a basis. "
+                f"This rests on Vampire's proofs, not on Lean.")
+    raise ValueError(kind)
+
+
+def witness_text(v, root):
+    """Who shows the lower bound: a table of the pool, or a semigroup found by Vampire's model builder."""
+    bound = BOUND_INFO[v]
+    j = bound["k"]
+    if bound.get("witness"):
+        n, kk, o = C.MODELS[C.LABELS.index(bound["witness"])]
+        return (f"{slink((n, kk), root, o=o, named=False)} satisfies every identity of {esc(vlabel(v))} in "
+                f"{plural(j, 'variable')}, because its subsemigroups generated by {plural(j, 'element')} lie in "
+                f"{esc(vlabel(v))}, but it is not in {esc(vlabel(v))}")
+    m = len(bound["model"])
+    return (f"the semigroup of order {m} shown below satisfies every identity of {esc(vlabel(v))} in "
+            f"{plural(j, 'variable')}, but not {esc(fmt_identity(bound['violates']))}, which holds in "
+            f"{esc(vlabel(v))}")
+
+
+def optimality(v, root="../"):
+    """The note on the number of variables of the basis in the fewest variables."""
+    k = nvars(FEWEST_VARS[v]["identities"])
+    low = LOWER_BOUND[v]
+    if OPTIMAL[v]:
+        return f"No basis uses fewer variables: {witness_text(v, root)}."
+    searched = any(r["kind"] in ("search", "search-failed") for w in (v, VARIETIES[v]["dual"])
+                   for r in FEW_BY.get(VARIETIES[w]["slug"], []))
+    tail = (" A search with Vampire found neither a basis in fewer variables nor a semigroup that rules one out."
+            if searched else "")
+    if low >= 2:
+        return (f"Every basis uses at least {plural(low, 'variable')}: {witness_text(v, root)}. Whether a basis in "
+                f"fewer than {k} variables exists is not known.{tail}")
+    return f"Whether a basis in fewer variables exists is not known.{tail}"
+
+
+def countermodel_block(v):
+    """The Cayley table of a semigroup that shows a lower bound, when it is not a table of the census."""
+    bound = BOUND_INFO[v]
+    if not bound.get("model"):
+        return ""
+    T = [[x + 1 for x in row] for row in bound["model"]]
+    return (f'<details><summary>The semigroup of order {len(T)} that shows the lower bound</summary>'
+            f'<div class="scroll">{cayley(T, properties(T))}</div><p class="note">Found by the finite model builder of Vampire and checked by '
+            f'evaluation: it is associative, satisfies the rules of a complete rewriting system of the free object of '
+            f'{esc(vlabel(v))} on {plural(bound["k"], "generator")}, and so every identity of {esc(vlabel(v))} in '
+            f'{plural(bound["k"], "variable")}, but not {esc(fmt_identity(bound["violates"]))}.</p></details>')
+
+
+def basis_boxes(v, root="../", heading="h2"):
+    """The basis in the fewest variables and, when it differs, the basis with the fewest identities."""
+    fv, fi = FEWEST_VARS[v], FEWEST_IDS[v]
+    out = [f"""<div class="box"><p><b>Fewest variables</b>: {vars_text(fv['identities'])}</p>
+{basis_list(fv['identities'])}<p class="note">{optimality(v, root)} {provenance(fv, v)}</p>{countermodel_block(v)}</div>"""]
+    if canonical_basis(fi["identities"]) != canonical_basis(fv["identities"]):
+        out.append(f"""<div class="box"><p><b>Fewest identities</b>: {vars_text(fi['identities'])}</p>
+{basis_list(fi['identities'])}<p class="note">{provenance(fi, v)}</p></div>""")
+    return "\n".join(out)
+
+
+def footer_text():
+    return (f"SemiBase: the semigroups of orders one to six and their identity bases. Tables from GAP Smallsemi 0.7.2; "
+            f"proofs checked by Lean 4 in <a href=\"{REPO_URL}\">nasqret/semibase-order6</a> (commit "
+            f"<span class=\"mono\">{COMMIT[:7]}</span>, <a href=\"https://doi.org/{DOI}\">doi:{DOI}</a>); bases "
+            f"reduced and searched with Vampire, partly by the <span class=\"mono\">bases-min</span> tools of "
+            f"M. Janota. Built {TODAY}.")
 
 
 def page(title, body, root, description="", scripts=()):
@@ -563,14 +767,11 @@ def page(title, body, root, description="", scripts=()):
 <link rel="stylesheet" href="{asset('style.css', root)}">
 <script type="speculationrules">{SPECULATION}</script></head>
 <body><header class="top"><div class="wrap"><a class="brand" href="{root}index.html">SemiBase</a><nav>{nav}</nav>
-<form onsubmit="return sbGo(this)" data-root="{root}"><input name="q" placeholder="Semigroup: 3842, L, C8" aria-label="Go to a semigroup"></form></div></header>
+<form onsubmit="return sbGo(this)" data-root="{root}"><input name="q" placeholder="Semigroup: 3842, 5-415, L, B2" aria-label="Go to a semigroup"></form></div></header>
 <main class="wrap">
 {body}
 </main>
-<footer><div class="wrap">SemiBase: the semigroups of order six and their identity bases. Tables from GAP Smallsemi 0.7.2;
-proofs checked by Lean 4 in <a href="{REPO_URL}">nasqret/semibase-order6</a> (commit <span class="mono">{COMMIT[:7]}</span>);
-reduced bases and inclusions of varieties computed with Vampire by the <span class="mono">bases-min</span> tools of
-M. Janota. Built {TODAY}.</div></footer>
+<footer><div class="wrap">{footer_text()}</div></footer>
 <script src="{asset('site.js', root)}"></script>{extra}</body></html>
 """
 
@@ -587,9 +788,14 @@ def write(path, text):
 
 def kind_phrase(P):
     """A phrase for the structure of the semigroup, and whether it says more than 'semigroup' or 'monoid'."""
+    n = P["n"]
     comm = "commutative " if P["comm"] else ""
+    if n == 1:
+        return "the trivial semigroup, with one element", True
     if P["group"]:
-        return ("the cyclic group of order six" if P["comm"] else "the symmetric group S₃"), True
+        if P["cyclic"]:
+            return f"the cyclic group of order {n}", True
+        return ("the Klein four-group" if n == 4 else "the symmetric group S₃"), True
     if P["left_zero"]:
         return "a left zero semigroup: xy = x for all x and y", True
     if P["right_zero"]:
@@ -609,38 +815,42 @@ def kind_phrase(P):
     return f"a {comm}{'monoid' if monoid else 'semigroup'}", False
 
 
-def describe(k):
-    P = PROPS[k]
-    if k in NONFINITE:
-        return f"[6, {k}] is {NONFINITE[k][1]}, one of the four semigroups of order six without a finite identity basis."
+def describe(key):
+    n, k = key
+    P = PROPS[key]
+    if n == 6 and k in NONFINITE:
+        return (f"[6, {k}] is {NONFINITE_NAMES[k][1]}, one of the four semigroups of order six without a finite "
+                f"identity basis.")
     phrase, special = kind_phrase(P)
     facts = []
-    if not (P["band"] or P["group"] or P["nil"]):
+    if not (P["band"] or P["group"] or P["nil"] or n == 1):
         facts.append(plural(len(P["idem"]), "idempotent"))
-    if P["zero"] is not None and not P["nil"]:
+    if P["zero"] is not None and not P["nil"] and n > 1:
         facts.append(f"a zero, {P['zero']}")
-    if P["one"] is not None and not P["group"]:
+    if P["one"] is not None and not P["group"] and n > 1:
         facts.append(f"an identity element, {P['one']}")
     listed = ", ".join(facts[:-1]) + (" and " if len(facts) > 1 else "") + (facts[-1] if facts else "")
-    if k in NAMED:
-        text = f"[6, {k}] is {NAMED[k][1]}: {phrase}" + (f" with {listed}." if listed else ".")
+    label = slabel(n, k)
+    if key in NAMED:
+        text = f"{label} is {NAMED[key][1]}: {phrase}" + (f" with {listed}." if listed else ".")
     elif special:
-        text = f"[6, {k}] is {phrase}." + (f" It has {listed}." if listed else "")
+        text = f"{label} is {phrase}." + (f" It has {listed}." if listed else "")
     else:
-        text = f"[6, {k}] is {phrase}" + (f" with {listed}." if listed else ".")
-    t = CLASS_THEORY[k]
-    n = len(SHORTEST[t][1]["identities"])
-    others = len(GENS[t]) - 1
-    text += (f" It is finitely based: {plural(n, 'identity', 'identities')} {verb(n, 'defines', 'define')} its "
-             f"variety, which " + (f"{plural(others, 'other semigroup')} of order six also "
-                                    f"{verb(others, 'generates', 'generate')}." if others else
-                                    "no other semigroup of order six generates."))
+        text = f"{label} is {phrase}" + (f" with {listed}." if listed else ".")
+    v = CLASS_VAR[key]
+    fv = FEWEST_VARS[v]["identities"]
+    others = len([g for g in GENS[v] if g[:2] != key])
+    text += (f" It is finitely based: {plural(len(fv), 'identity', 'identities')} in "
+             f"{plural(nvars(fv), 'variable')} {verb(len(fv), 'defines', 'define')} its variety, which " +
+             (f"{plural(others, 'other semigroup')} of order at most six also {verb(others, 'generates', 'generate')}."
+              if others else "no other semigroup of order at most six generates."))
     return text
 
 
-def tags(k):
-    P = PROPS[k]
-    out = []
+def tags(key):
+    n, k = key
+    P = PROPS[key]
+    out = [f"order {n}"]
     if P["group"]:
         out.append("group")
     elif P["one"] is not None:
@@ -655,9 +865,9 @@ def tags(k):
         out.append("inverse")
     elif P["regular"] and not P["group"]:
         out.append("regular")
-    out.append("self-dual" if SELF_DUAL[k] else "not self-dual")
-    if k not in NONFINITE:
-        out.append(KIND[k])
+    out.append("self-dual" if SELF_DUAL[key] else "not self-dual")
+    if not (n == 6 and k in NONFINITE):
+        out.append(KIND[key])
     return '<div class="tags">' + "".join(f"<span>{esc(t)}</span>" for t in out) + "</div>"
 
 
@@ -669,26 +879,33 @@ def orientation_note(k):
                     "its basis is the basis of this table shown above.",
         "relabelled": "The theorem is about a renumbering of this table; the census theorem checks the "
                       "explicit permutation of the elements.",
-    }[CLASS_RECORD[k]["proof_orientation"]]
+    }[C.RECORD6[k]["proof_orientation"]]
 
 
-def lean_block(k):
+def size_row(key):
+    files, lines = SIZE[key]
+    own = (f" Of these, {OWN[key]:,} lines are used by the proof of this class and of no other." if OWN[key] else
+           " All of it is shared with the proofs of other classes.")
+    return ("Size", f"Checking this class alone compiles {files:,} Lean files with {lines:,} lines: the endpoint "
+                    f"theorem and everything it imports, the shared library included.{own}")
+
+
+def lean_block(key):
+    n, k = key
+    if n < 6:
+        return lower_lean_block(key)
     path, line, name, module = ENDPOINT[k]
-    files, lines = SIZE[k]
     spath, sline = census_ref(k)
     cpath, cline = catalogue_ref(k)
     rows = []
     if k in NONFINITE:
         shown = f"theorem {name.split('.')[-1]} {CENSUS_MAP['non_finitely_based'][f'S6_{k}']['statement']}"
     else:
-        shown = CLASS_RECORD[k]["checked_type"]
+        shown = C.RECORD6[k]["checked_type"]
         kind, text = kind_of(module)
         rows.append(("Table", esc(orientation_note(k))))
         rows.append(("Method", f"<b>{esc(kind)}</b>. {esc(text)}"))
-    own = (f" Of these, {OWN[k]:,} lines are used by the proof of this class and of no other." if OWN[k] else
-           " All of it is shared with the proofs of other classes.")
-    rows.append(("Size", f"Checking this class alone compiles {files:,} Lean files with {lines:,} lines: the "
-                         f"endpoint theorem and everything it imports, the shared library included.{own}"))
+    rows.append(size_row(key))
     rows.append(("Census", f'<a href="{lean_url(spath, sline)}" class="mono">SemiBase.Census.S6_{k}</a> checks '
                            f'that the theorem is about the table of this class and concludes '
                            f'<span class="mono">Classified</span>; <a href="{lean_url(cpath, cline)}" class="mono">'
@@ -700,24 +917,73 @@ def lean_block(k):
 <dl class="props">{dl}</dl>"""
 
 
-def semigroup_page(k):
-    P = PROPS[k]
-    name = NONFINITE.get(k, NAMED.get(k, (None,)))[0]
-    title = f"[6, {k}]" + (f" {name}" if name else "")
-    badge = '<span class="badge nfb">no finite basis</span>' if k in NONFINITE else \
-        '<span class="badge fb">finitely based</span>'
-    pager = ('<div class="pager">' + (f'<a href="{k - 1}.html">← [6, {k - 1}]</a>' if k > 1 else "<span></span>")
-             + (f'<a href="{k + 1}.html">[6, {k + 1}] →</a>' if k < N else "") + "</div>")
-    body = [pager, f"<h1>{esc(title)} {badge}</h1>", tags(k), f'<p class="lead">{esc(describe(k))}</p>']
+def lower_lean_block(key):
+    e = LOWER_ENDPOINT[key]
+    rows = [("Table", "The theorem is about the semigroup with exactly this table, with the elements numbered from "
+                      "0 in Lean."),
+            ("Method", f"<b>{esc(e['kind'])}</b>. {esc(LOWER_KINDS[e['kind']])}")]
+    if e["path"]:
+        theorem = f'<a href="{lean_url(e["path"], e["line"])}" class="mono">{esc(e["theorem"])}</a>'
+        rows.append(size_row(key))
+        rows.append(("Where", "In the public repository, which builds it as part of the proofs of order six" +
+                     ("." if e["same"] else ", in a later revision of the file than the one the audit checked.")))
+    else:
+        theorem = f'<span class="mono">{esc(e["theorem"])}</span>'
+        rows.append(("Where", "In the repository of the campaign that wrote the proofs, which is not public; this "
+                              "theorem is not among those that the public repository needs for order six."))
+    rows.append(("Transpose", f'<span class="mono">{esc(e["opposite"])}</span>: the basis read backwards is a basis of '
+                              f'the opposite semigroup, with the transposed table.'))
+    rows.append(("Audit", "The campaign's audit of the orders one to five checked the statement of each of the 1,309 "
+                          "theorems, in both orientations, with the Lean kernel; for order five, a second replay "
+                          "by the bases-min tools read the bases back from Lean."))
+    dl = "".join(f"<dt>{label}</dt><dd>{value}</dd>" for label, value in rows)
+    return f"""<h2>Lean proof</h2>
+<p>Theorem: {theorem}</p>
+<pre class="lean">{esc(e['type'])}</pre>
+<dl class="props">{dl}</dl>"""
+
+
+def variety_summary(key):
+    """The varieties of a class and of its transpose, for the semigroup pages."""
+    n, k = key
+    v, w = CLASS_VAR[key], CLASS_VAR_OP[key]
+    label = slabel(n, k)
+    inside = IN_VARIETIES[(n, k, 0)]
+    if SELF_DUAL[key]:
+        transposed = "The class is self-dual, so its transpose generates the same variety."
+    elif v == w:
+        transposed = (f"The transposed table, the opposite semigroup, generates the same variety: "
+                      f"{esc(vlabel(v))} is self-dual.")
+    else:
+        transposed = f"The transposed table, the opposite semigroup, generates the dual variety {vlink(w)}."
+    return (f"<p>{label} generates the variety {vlink(v)}; {plural(len(GENS[v]), 'semigroup')} of order at most six "
+            f"{verb(len(GENS[v]), 'generates', 'generate')} it, and {plural(len(MEMBERS[v]), 'semigroup')} of order "
+            f"at most six {verb(len(MEMBERS[v]), 'lies', 'lie')} in it. {transposed} {label} lies in {inside} of the "
+            f"{NV} varieties, those whose basis it satisfies.</p>")
+
+
+def semigroup_page(key):
+    n, k = key
+    P = PROPS[key]
+    nfb = n == 6 and k in NONFINITE
+    name = NAMED.get(key, (None,))[0]
+    title = slabel(n, k) + (f" {name}" if name else "")
+    badge = '<span class="badge nfb">no finite basis</span>' if nfb else '<span class="badge fb">finitely based</span>'
+    prev_key = (n, k - 1) if k > 1 else ((n - 1, COUNT[n - 1]) if n > 1 else None)
+    next_key = (n, k + 1) if k < COUNT[n] else ((n + 1, 1) if n < 6 else None)
+    pager = ('<div class="pager">' +
+             (f'<a href="{sslug(prev_key)}.html">← {slabel(*prev_key)}</a>' if prev_key else "<span></span>") +
+             (f'<a href="{sslug(next_key)}.html">{slabel(*next_key)} →</a>' if next_key else "") + "</div>")
+    body = [pager, f"<h1>{esc(title)} {badge}</h1>", tags(key), f'<p class="lead">{esc(describe(key))}</p>']
 
     highlight, diff_note = (), ""
-    if k in (3842, 3843):
-        other = 3843 if k == 3842 else 3842
-        highlight = next(cells for j, cells in NEAR[k] if j == other)
+    if key in ((6, 3842), (6, 3843)):
+        other = (6, 3843) if k == 3842 else (6, 3842)
+        highlight = next(cells for j, cells in NEAR[key] if j == other)
         diff_note = f" Shaded: the two entries in which this table differs from that of {slink(other)}."
     rank = P["rank"]
     props = [
-        ("Smallsemi", f'<span class="mono">SmallSemigroup(6, {k})</span>'),
+        ("Smallsemi", f'<span class="mono">SmallSemigroup({n}, {k})</span>'),
         ("Idempotents", esc(", ".join(map(str, P["idem"])))),
         ("Zero", esc(P["zero"] if P["zero"] is not None else "none")),
         ("Identity", esc(P["one"] if P["one"] is not None else "none")),
@@ -727,16 +993,17 @@ def semigroup_page(k):
         ("Group", "yes" if P["group"] else "no"),
         ("𝒥-classes", str(P["jclasses"])),
         ("Rank", esc(f"{len(rank)}, generated by {{{', '.join(map(str, rank))}}}")),
-        ("Self-dual", "yes: anti-isomorphic to itself" if SELF_DUAL[k] else
+        ("Self-dual", "yes: anti-isomorphic to itself" if SELF_DUAL[key] else
          "no: the class also stands for the opposite semigroup, with the transposed table"),
     ]
     dl = "".join(f"<dt>{label}</dt><dd>{value}</dd>" for label, value in props)
-    body.append(f"""<div class="two"><div><h2>Cayley table</h2>{cayley(TABLE[k], P, highlight)}
+    zero_note = "; grey: the zero" if P["zero"] is not None and n > 1 else ""
+    body.append(f"""<div class="two"><div><h2>Cayley table</h2>{cayley(TABLE[key], P, highlight)}
 <p class="note">The product of the row element and the column element, numbered as in Smallsemi. Blue: idempotents
-on the diagonal{'; grey: the zero' if P['zero'] is not None else ''}.{diff_note}</p></div>
+on the diagonal{zero_note}.{diff_note}</p></div>
 <div><h2>Structure</h2><dl class="props">{dl}</dl></div></div>""")
 
-    if k in NONFINITE:
+    if nfb:
         family, argument, source = NONFINITE_DETAIL[k]
         body.append(f"""<h2>No finite identity basis</h2>
 <div class="box nfb"><p>For every n, the identity</p><p class="formula">{esc(family)}</p>
@@ -746,96 +1013,88 @@ one of these identities and is not a basis.</p>
 finite basis was shown by Lee, Li and Zhang (2012). See <a href="../nonfinite.html">the four nonfinitely based
 semigroups</a>.</p></div>""")
     else:
-        t = CLASS_THEORY[k]
-        form = SHORTEST[t][1]
-        b = CLASS_BASIS[k]
+        v = CLASS_VAR[key]
+        b = CLASS_BASIS[key]
         certified = BASIS[b]
-        body.append(f"""<h2>Identity basis</h2>
-<div class="box"><p><b>Shortest known basis</b>: {plural(len(form['identities']), 'identity', 'identities')} {status_badge(form)}</p>
-{basis_list(form['identities'])}
-<p class="note">{STATUS_NOTE[form['status']]} Obtained from a basis certified in Lean by removing identities that
-follow from the others, with the prover Vampire; the equivalence rests on Vampire's proofs, not on Lean. Shortest
-known, not known to be minimal.</p></div>""")
-        if len(certified) <= 20:
-            body.append(f"<h3>Basis certified in Lean: {plural(len(certified), 'identity', 'identities')}</h3>"
-                        + basis_list(certified))
+        body.append(f"<h2>Identity basis</h2>{basis_boxes(v)}")
+        shown = {canonical_basis(FEWEST_VARS[v]["identities"]), canonical_basis(FEWEST_IDS[v]["identities"])}
+        if canonical_basis(certified) in shown:
+            body.append("<h3>Basis certified in Lean</h3><p>The Lean theorem below certifies the basis "
+                        + ("above." if len(shown) == 1 else "with the fewest variables above." if
+                           canonical_basis(certified) == canonical_basis(FEWEST_VARS[v]["identities"]) else
+                           "with the fewest identities above.") + "</p>")
+        elif len(certified) <= 20:
+            body.append(f"<h3>Basis certified in Lean: {vars_text(certified)}</h3>" + basis_list(certified))
         else:
             body.append(f"<h3>Basis certified in Lean</h3><p>The Lean theorem certifies a longer basis, of "
-                        f"{blink(b)}; the shortest known basis above is equivalent to it.</p>")
-    body.append(lean_block(k))
+                        f"{blink(b)} in {plural(nvars(certified), 'variable')}; the bases above are equivalent "
+                        f"to it.</p>")
+    body.append(lean_block(key))
 
-    if k in NONFINITE:
-        inside = IN_VARIETIES.get(k, 0)
-        body.append(f"""<h2 id="variety">Varieties</h2><p>[6, {k}] generates a variety without a finite basis, so not one of the
-505 varieties of this census. """ + (f"It lies in {inside} of them, those whose basis it satisfies.</p>" if inside else
-            "It lies in none of them: no finitely based semigroup of order six generates a variety that contains "
-            "it, as evaluating their bases in this table shows.</p>"))
+    if nfb:
+        inside = IN_VARIETIES.get((6, k, 0), 0)
+        body.append(f"""<h2 id="variety">Varieties</h2><p>[6, {k}] generates a variety without a finite basis, so not one of
+the {NV} varieties of the census. """ + (f"It lies in {inside} of them, those whose basis it satisfies.</p>" if inside
+            else "It lies in none of them, and neither does its transpose: no finitely based semigroup of order at "
+                 "most six generates a variety that contains it, as evaluating their bases in this table "
+                 "shows.</p>"))
     else:
-        t = CLASS_THEORY[k]
-        up = sorted(UP[t], key=VNAME.get)
-        down = sorted(DOWN[t], key=VNAME.get)
-        gens = GENS[t]
-        others = [g for g in gens if g != k]
-        others_text = ("no other semigroup of order six generates it" if not others else
-                       f"{plural(len(others), 'other semigroup')} of order six "
-                       f"{verb(len(others), 'generates', 'generate')} it too")
-        body.append(f"""<h2 id="variety">Variety</h2>
-<p>[6, {k}] generates the variety {vlink(t)}; {others_text}, and {plural(len(CONTAINS[t]), 'semigroup')} of order
-six {verb(len(CONTAINS[t]), 'lies', 'lie')} in it. [6, {k}] lies in {IN_VARIETIES[k]} of the 505 varieties of the
-census, those whose basis it satisfies.</p>
+        v = CLASS_VAR[key]
+        up, down = UP[v], DOWN[v]
+        body.append(f"""<h2 id="variety">Variety</h2>{variety_summary(key)}
 <dl class="props"><dt>Directly above</dt><dd>{links([vlink(u) for u in up]) if up else 'none: a maximal variety of the census'}</dd>
 <dt>Directly below</dt><dd>{links([vlink(u) for u in down]) if down else 'none: a minimal variety of the census'}</dd></dl>
-<p><a href="../varieties.html#graph={VNAME[t]}&amp;around=2">V[{VNAME[t]}] in the inclusion graph</a>, with the varieties
-above and below it.</p>""")
+<p><a href="../varieties.html#graph={VARIETIES[v]['slug']}&amp;around=2">{esc(vlabel(v))} in the inclusion graph</a>,
+with the varieties above and below it.</p>""")
+        others = [g for g in GENS[v] if g[:2] != key or g[2]]
         if others:
-            more = (f'<p><a href="../v/{VNAME[t]}.html">All {len(others):,} on the variety page</a></p>'
+            more = (f'<p><a href="../v/{VARIETIES[v]["slug"]}.html">All {len(others):,} on the variety page</a></p>'
                     if len(others) > 48 else "")
-            body.append(f"<h3>Generating the same variety</h3>{links([slink(g) for g in others[:48]])}{more}")
+            body.append(f"<h3>Generating the same variety</h3>{links([sglink(g) for g in others[:48]])}{more}")
 
-    near = sorted(NEAR.get(k, []), key=lambda item: (len(item[1]), item[0]))
+    near = sorted(NEAR.get(key, []), key=lambda item: (len(item[1]), item[0]))
     if near:
         items = []
         for j, cells in near[:30]:
             where = ", ".join(f"({a}, {b})" for a, b in cells)
-            if j in NONFINITE:
+            if j not in CLASS_VAR:
                 extra = ", no finite basis"
-            elif k in CLASS_THEORY and CLASS_THEORY[j] == CLASS_THEORY[k]:
+            elif key in CLASS_VAR and CLASS_VAR[j] == CLASS_VAR[key]:
                 extra = ", the same variety"
             else:
-                extra = f", variety {vlink(CLASS_THEORY[j])}"
+                extra = f", variety {vlink(CLASS_VAR[j])}"
             items.append(f"<li>{slink(j)}: {plural(len(cells), 'entry', 'entries')} {where}{extra}</li>")
         more = f'<p class="note">And {len(near) - 30} more.</p>' if len(near) > 30 else ""
-        body.append(f"""<h2>Nearby tables</h2><p class="note">Semigroups whose Smallsemi table differs from this one
-in one or two entries (row, column), as the tables are listed, not up to renumbering.</p>
+        body.append(f"""<h2>Nearby tables</h2><p class="note">Semigroups of the same order whose Smallsemi table differs
+from this one in one or two entries (row, column), as the tables are listed, not up to renumbering.</p>
 <ul class="near">{''.join(items)}</ul>{more}""")
-    return page(f"[6, {k}]{' ' + name if name else ''} · SemiBase", "\n".join(body), "../",
-                f"The semigroup [6, {k}] of order six: Cayley table, identity basis, Lean proof, variety.")
+    return page(f"{title} · SemiBase", "\n".join(body), "../",
+                f"The semigroup {slabel(n, k)} of order {n}: Cayley table, identity basis, Lean proof, variety.")
 
 
-def hasse(t):
-    up = sorted(UP[t], key=VNAME.get)
-    down = sorted(DOWN[t], key=VNAME.get)
+def hasse(v):
+    up, down = UP[v], DOWN[v]
     shown_up, shown_down = up[:8], down[:8]
-    W = max(380, 92 * max(len(shown_up), len(shown_down), 1) + 20)
+    W = max(380, 108 * max(len(shown_up), len(shown_down), 1) + 20)
 
     def place(items, y):
         return [((i + 0.5) * W / len(items), y, u) for i, u in enumerate(items)]
 
     top, bottom, mid = place(shown_up, 22), place(shown_down, 162), (W / 2, 92)
     out = [f'<div class="hasse-wrap"><svg class="hasse" width="{W:.0f}" height="186" viewBox="0 0 {W:.0f} 186" '
-           f'role="img" aria-label="The varieties directly above and below V[{VNAME[t]}]">']
+           f'role="img" aria-label="The varieties directly above and below {esc(vlabel(v))}">']
     for x, y, _ in top + bottom:
         out.append(f'<line x1="{x:.0f}" y1="{y:.0f}" x2="{mid[0]:.0f}" y2="{mid[1]:.0f}"/>')
 
     def node(x, y, u, own=False):
-        label = f"V[{VNAME[u]}]"
-        w = 8 * len(label) + 16
-        shape = (f'<rect x="{x - w / 2:.0f}" y="{y - 12:.0f}" width="{w}" height="24" rx="5"'
-                 f'{" class=\"self\"" if own else ""}/><text x="{x:.0f}" y="{y + 4:.0f}">{label}</text>')
-        return shape if own else f'<a href="{VNAME[u]}.html">{shape}</a>'
+        label = vlabel(u)
+        w = 7.4 * len(label) + 16
+        shape = (f'<rect x="{x - w / 2:.0f}" y="{y - 12:.0f}" width="{w:.0f}" height="24" rx="5"'
+                 f'{" class=\"self\"" if own else ""}/><text x="{x:.0f}" y="{y + 4:.0f}">{esc(label)}</text>')
+        return shape if own else f'<a href="{VARIETIES[u]["slug"]}.html">{shape}</a>'
 
     out += [node(x, y, u) for x, y, u in top + bottom]
-    out.append(node(mid[0], mid[1], t, own=True))
+    out.append(node(mid[0], mid[1], v, own=True))
     if len(up) > len(shown_up):
         out.append(f'<text x="{W - 4:.0f}" y="50" class="more">+{len(up) - len(shown_up)} more above</text>')
     if len(down) > len(shown_down):
@@ -844,83 +1103,115 @@ def hasse(t):
     return "".join(out)
 
 
-def variety_page(t):
-    v = VNAME[t]
-    form = SHORTEST[t][1]
-    gens, members = GENS[t], CONTAINS[t]
-    up = sorted(UP[t], key=VNAME.get)
-    down = sorted(DOWN[t], key=VNAME.get)
-    certified = "".join(f"<li>{blink(b)}, certified in Lean for {plural(len(BASIS_CLASSES[b]), 'semigroup')}</li>"
-                        for b in THEORY_BASES[t])
-    nonfinite_in = [k for k in NONFINITE if k in members]
-    def name_of(u):
-        return f"V[{VNAME[u]}]" if u == t else vlink(u)
+def sgv_link(v):
+    entry = SGV.get(v)
+    if not entry:
+        return ""
+    return (f'<a href="{SGV_URL}#V{entry["order"]}{entry["number"]}">{entry["name"]}</a> in the database of Araújo, '
+            f'Araújo, Cameron, Lee and Raminhos')
 
-    # For each undecided pair (a, b), a semigroup of order six refutes that V(b) lies in V(a); whether V(a) lies
-    # in V(b) is open.
-    open_ = [f"whether {name_of(a)} lies in {name_of(b)}" for a, b in ORDER["undecided"] if t in (a, b)]
-    undecided = (f"<dt>Undecided</dt><dd>{'; '.join(open_)}: no proof was found, and no semigroup of order six "
-                 f"refutes it.</dd>") if open_ else ""
-    if len(gens) > 150:
-        generators = (f'<details data-bits="{bits_hex(gens)}" data-root="../"><summary>Show all {len(gens):,}'
-                      f'</summary><div class="links"></div></details>')
-    else:
-        generators = links([slink(g) for g in gens])
-    body = f"""<h1>Variety V[{v}]</h1>
-<p class="lead">The variety generated by {slink(v)}: all semigroups that satisfy every identity of [6, {v}].
-{plural(len(gens), 'semigroup')} of order six {verb(len(gens), 'generates', 'generate')} it, and
-{plural(len(members), 'semigroup')} of order six {verb(len(members), 'lies', 'lie')} in it.</p>
-<h2>Shortest known basis</h2><div class="box"><p>{plural(len(form['identities']), 'identity', 'identities')} {status_badge(form)}</p>
-{basis_list(form['identities'])}<p class="note">{STATUS_NOTE[form['status']]} Obtained from a certified basis by
-removing identities that follow from the others (Vampire). Shortest known, not known to be minimal.</p></div>
-<h2>Certified bases</h2><ul>{certified}</ul>
-{'<p class="note">The certified bases define the same variety: Vampire derives each from the other.</p>' if len(THEORY_BASES[t]) > 1 else ''}
-<h2>Among the 505 varieties</h2>{hasse(t)}
+
+def variety_page(v):
+    var = VARIETIES[v]
+    n, k, o = var["name"]
+    gens, members = GENS[v], MEMBERS[v]
+    up, down = UP[v], DOWN[v]
+    label = vlabel(v)
+    generator = slink((n, k), o=o, named=False)
+    dual = ("It is self-dual: the opposite of each of its semigroups lies in it too." if var["self_dual"] else
+            f"Its dual, the variety of the opposite semigroups, is {vlink(var['dual'])}.")
+    primitive = (f"No semigroup of order less than {n} generates it." if n > 1 else "")
+    sgv = sgv_link(v)
+    sgv_text = f" It is {sgv}." if sgv else ""
+    certified = []
+    seen = set()
+    for i in var["gens"]:
+        nn, kk, oo = MODELS[i]
+        b = CLASS_BASIS[(nn, kk)]
+        if (b, oo) in seen:
+            continue
+        seen.add((b, oo))
+        users = BASIS_CLASSES[b]
+        whose = (slink(users[0]) if len(users) == 1 else plural(len(users), "semigroup"))
+        certified.append(f"<li>{blink(b)} in {plural(nvars(BASIS[b]), 'variable')}" +
+                         (", read backwards" if oo else "") + f", certified in Lean for {whose}" +
+                         (", whose transposes generate this variety" if oo else "") + "</li>")
+    old = OLD_NAME.get(v)
+    renamed = (f'<p class="note">Called V[{old}] in the first release of the census, which named each variety after '
+               f'its smallest generator of order six.</p>' if old is not None and str(old) != var["slug"] else "")
+    body = f"""<h1>Variety {esc(label)}</h1>
+<p class="lead">The variety generated by {generator}{f', the opposite of {slabel(n, k)}, with the transposed table' if o else ''}:
+all semigroups that satisfy every identity of {slabel(n, k, o)}. {primitive} {dual}{sgv_text}</p>{renamed}
+<h2>Identity bases</h2>{basis_boxes(v)}
+<h3>Certified in Lean</h3><ul>{''.join(certified)}</ul>
+{'<p class="note">The certified bases define the same variety: each holds in the generators of the others, and each is a basis of the variety of its own generator.</p>' if len(certified) > 1 else ''}
+<h2>Among the {NV} varieties</h2>{hasse(v)}
 <dl class="props"><dt>Directly above</dt><dd>{links([vlink(u) for u in up]) if up else 'none: a maximal variety of the census'}</dd>
-<dt>Directly below</dt><dd>{links([vlink(u) for u in down]) if down else 'none: a minimal variety of the census'}</dd>{undecided}</dl>
-<p class="note">A variety lies above another when it contains it. An inclusion holds when the basis of the smaller
-variety derives that of the larger one, proved by Vampire; it fails when a semigroup of order six lies in the one
-and not in the other.</p>
-<p><a href="../varieties.html#graph={v}&amp;around=2">Explore V[{v}] in the inclusion graph</a>, with everything above
-and below it.</p>
-<h2>Generated by {plural(len(gens), 'semigroup')} of order six</h2>{generators}
-<h2>Contains {plural(len(members), 'semigroup')} of order six</h2>
-<p class="note">The semigroups of order six that satisfy the basis{'; among them the nonfinitely based ' + ', '.join(slink(k) for k in nonfinite_in) if nonfinite_in else ''}.</p>
-<details data-bits="{MEMBER_HEX[t]}" data-root="../"><summary>Show all {len(members):,}</summary><div class="links"></div></details>"""
-    return page(f"Variety V[{v}] · SemiBase", body, "../",
-                f"The variety generated by the semigroup [6, {v}]: basis, inclusions, generators.")
+<dt>Directly below</dt><dd>{links([vlink(u) for u in down]) if down else 'none: a minimal variety of the census'}</dd></dl>
+<p class="note">A variety lies above another when it contains it. {esc(label)} lies in another variety exactly when
+{slabel(n, k, o)} satisfies a basis of that variety, and the basis certified in Lean decides it, so every inclusion
+among the {NV} varieties is known.</p>
+<p><a href="../varieties.html#graph={var['slug']}&amp;around=2">Explore {esc(label)} in the inclusion graph</a>, with
+everything above and below it.</p>
+<h2>Generated by {plural(len(gens), 'semigroup')}</h2><p class="note">Of order at most six, up to isomorphism:
+{by_order(gens)}. A superscript op marks the opposite semigroup of a class, with the transposed table.</p>
+{semigroup_list(gens)}
+<h2>Contains {plural(len(members), 'semigroup')}</h2>
+<p class="note">Of order at most six, up to isomorphism: {by_order(members)}; those that satisfy the basis.</p>
+{semigroup_list(members, inline=0)}"""
+    return page(f"Variety {label} · SemiBase", body, "../",
+                f"The variety {label}: bases in the fewest variables and identities, inclusions, generators.")
 
 
 def basis_page(b):
-    t = BASIS_THEORY[b]
     users = BASIS_CLASSES[b]
-    form = REDUCED[b]
-    body = f"""<h1>A certified basis of {plural(len(BASIS[b]), 'identity', 'identities')}</h1>
-<p class="lead">This list of identities is a basis, proved in Lean, of {slink(users[0]) if len(users) == 1 else
-plural(len(users), 'semigroup') + ' of order six'}, {'which generates' if len(users) == 1 else 'all of which generate'}
-the variety {vlink(t)}. Removing the identities that follow from the others leaves
-{plural(len(form['identities']), 'identity', 'identities')} (Vampire); the
-<a href="../v/{VNAME[t]}.html">variety page</a> shows the shortest known basis.</p>
-<p class="note">Identifier <span class="mono">{esc(b)}</span> in the data of the bases-min seal.</p>
-<h2>Certified for</h2>{links([slink(k) for k in users])}
-<h2>The identities</h2>{basis_list(BASIS[b])}"""
+    v = CLASS_VAR[users[0]]
+    n = users[0][0]
+    ids = BASIS[b]
+    reduced = REDUCED.get(b)
+    shorter = (f" Removing the identities that follow from the others leaves "
+               f"{plural(len(reduced['identities']), 'identity', 'identities')} (Vampire)." if reduced else "")
+    orders = sorted({u[0] for u in users})
+    who = slink(users[0]) if len(users) == 1 else plural(len(users), "semigroup") + (
+        f" of order {orders[0]}" if len(orders) == 1 else
+        " of orders " + ", ".join(map(str, orders[:-1])) + f" and {orders[-1]}")
+    body = f"""<h1>A certified basis of {plural(len(ids), 'identity', 'identities')}</h1>
+<p class="lead">This list of identities, in {plural(nvars(ids), 'variable')}, is a basis, proved in Lean, of {who},
+{'which generates' if len(users) == 1 else 'all of which generate'} the variety {vlink(v)}.{shorter} The
+<a href="../v/{VARIETIES[v]['slug']}.html">variety page</a> shows its bases in the fewest variables and with the fewest
+identities. Read backwards, the identities are a basis of the transposed tables.</p>
+<p class="note">Identifier <span class="mono">{esc(b)}</span>{' in the data of the bases-min seal' if b.startswith('sb-') else ''}.</p>
+<h2>Certified for</h2>{links([slink(u) for u in users])}
+<h2>The identities</h2>{basis_list(ids)}"""
     return page(f"Certified basis {b} · SemiBase", body, "../")
+
+
+def redirect_page(target, label):
+    return f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>{esc(label)} · SemiBase</title>
+<meta http-equiv="refresh" content="0; url={target}"><link rel="canonical" href="{target}"></head>
+<body><h1>{esc(label)}</h1><p>This variety has a new name: <a href="{target}">{esc(label)}</a>.</p></body></html>
+"""
 
 
 def browse_page():
     kinds = "".join(f'<option value="{i}">{esc(n)}</option>' for i, n in enumerate(KIND_NAMES))
     yn = '<option value="">any</option><option value="yes">yes</option><option value="no">no</option>'
-    body = f"""<h1>Browse the semigroups of order six</h1>
-<p class="lead">All 15,973 semigroups of order six up to isomorphism and anti-isomorphism, numbered as in Smallsemi.
-Filter them, sort by a column, and open one for its table, basis and proof.</p>
+    orders = "".join(f'<option value="{n}">{n}</option>' for n in C.ORDERS)
+    body = f"""<h1>Browse the semigroups of orders one to six</h1>
+<p class="lead">All {len(CLASSES):,} semigroups of orders one to six up to isomorphism and anti-isomorphism,
+numbered as in Smallsemi: {', '.join(f'{COUNT[n]:,} of order {n}' for n in C.ORDERS)}. Filter them, sort by a
+column, and open one for its table, bases and proof.</p>
 <details class="filterbox" id="filterbox" open><summary>Filters<span id="active"></span></summary>
 <div class="filters">
+<label>Order <select id="f-order"><option value="">any</option>{orders}</select></label>
 <label>Numbers from <input id="f-from" type="number" min="1" max="15973"></label>
 <label>to <input id="f-to" type="number" min="1" max="15973"></label>
 <label>Finite basis <select id="f-status"><option value="">any</option><option value="fb">yes</option><option value="nfb">no</option></select></label>
-<label>Basis size from <input id="f-bmin" type="number" min="1"></label>
+<label>Identities from <input id="f-bmin" type="number" min="1"></label>
 <label>to <input id="f-bmax" type="number" min="1"></label>
-<label>Variety V[k] <input id="f-variety" type="number" min="1" max="15973" placeholder="k"></label>
+<label>Variables <select id="f-vars"><option value="">any</option>{''.join(f'<option>{i}</option>' for i in range(2, 13))}</select></label>
+<label>Variety <input id="f-variety" type="text" placeholder="5-540, 7390-op" size="10"></label>
 <label>Idempotents <select id="f-idem"><option value="">any</option>{''.join(f'<option>{i}</option>' for i in range(1, 7))}</select></label>
 <label>Nilpotent <select id="f-nil">{yn}</select></label>
 <label>Monoid <select id="f-monoid">{yn}</select></label>
@@ -933,37 +1224,45 @@ Filter them, sort by a column, and open one for its table, basis and proof.</p>
 <div class="listbar"><p id="count" class="muted">Loading …</p><div><button type="button" class="btn colsbtn" data-target="browse-table"
 aria-pressed="false">All columns</button> <button id="reset" class="btn" type="button">Reset</button></div></div>
 <div class="scroll" id="browse-table"><table class="list"><thead><tr><th class="sort" data-key="id">Semigroup</th>
-<th class="sort num" data-key="basis" title="identities in the shortest known basis">Basis</th>
+<th class="sort num" data-key="basis" title="identities in the basis with the fewest identities">Identities</th>
+<th class="sort num" data-key="vars" title="variables of the basis in the fewest variables">Variables</th>
 <th class="sort" data-key="variety">Variety</th><th class="sort num opt" data-key="idem">Idemp.</th>
 <th class="sort num opt" data-key="nil" title="nilpotency class">Nilp.</th><th class="opt">Monoid</th><th class="opt">Comm.</th>
 <th class="opt">Band</th><th class="opt">Self-dual</th><th class="sort" data-key="kind">Proof</th>
 <th class="sort num opt" data-key="lines" title="lines of Lean the proof of this class compiles">Lean lines</th></tr></thead>
 <tbody id="rows"></tbody></table></div>
 <p><button id="more" class="more" type="button" hidden>Show more</button></p>
-<p class="note">Basis: identities in the shortest known basis. Lean lines: the lines of Lean that checking the class
-alone compiles, shared library included. The filters are kept in the address, so a filtered list can be bookmarked.</p>"""
+<p class="note">Identities: the basis of the variety with the fewest identities. Variables: the basis with the fewest
+variables, the largest number of distinct variables in one of its identities. Variety: the variety the table
+generates. Lean lines: the lines of Lean that checking the class alone compiles, shared library included, for the
+theorems in the public repository. The filters are kept in the address, so a filtered list can be bookmarked.</p>"""
     return page("Browse · SemiBase", body, "", scripts=("data.js", "browse.js"))
 
 
 def data_js():
     """The table of browse.html, one string per column with one or more base-36 digits per semigroup."""
-    varieties = sorted(VNAME[t] for t in THEORY_BASES)
-    position = {v: i for i, v in enumerate(varieties)}
-    columns = {name: [] for name in ("basis", "variety", "nil", "idem", "flags", "kind", "lines")}
-    for k in range(1, N + 1):
-        P = PROPS[k]
-        nfb = k in NONFINITE
-        length = 0 if nfb else len(SHORTEST[CLASS_THEORY[k]][1]["identities"])
-        assert length < 36
-        columns["basis"].append(DIGITS[length])
-        columns["variety"].append("--" if nfb else b36(position[VNAME[CLASS_THEORY[k]]], 2))
+    position = {v: v for v in range(NV)}
+    columns = {name: [] for name in ("order", "num", "basis", "vars", "variety", "nil", "idem", "flags", "kind",
+                                     "lines")}
+    for key in CLASSES:
+        n, k = key
+        P = PROPS[key]
+        fb = key in CLASS_VAR
+        v = CLASS_VAR.get(key)
+        columns["order"].append(str(n))
+        columns["num"].append(b36(k, 3))
+        columns["basis"].append(b36(len(FEWEST_IDS[v]["identities"]) if fb else 0, 2))
+        columns["vars"].append(DIGITS[nvars(FEWEST_VARS[v]["identities"])] if fb else "0")
+        columns["variety"].append(b36(position[v], 2) if fb else "--")
         columns["nil"].append(str(P["nil"]))
         columns["idem"].append(str(len(P["idem"])))
-        flags = int(P["one"] is not None) | P["comm"] << 1 | P["band"] << 2 | SELF_DUAL[k] << 3 | P["regular"] << 4
+        flags = int(P["one"] is not None and n > 1) | P["comm"] << 1 | P["band"] << 2 | SELF_DUAL[key] << 3 | \
+            P["regular"] << 4
         columns["flags"].append(DIGITS[flags])
-        columns["kind"].append(DIGITS[KIND_NAMES.index(KIND[k])])
-        columns["lines"].append(b36(SIZE[k][1], 4))
-    payload = {"n": N, "kinds": KIND_NAMES, "varieties": varieties}
+        columns["kind"].append(DIGITS[KIND_NAMES.index(KIND[key])])
+        columns["lines"].append(b36(SIZE[key][1], 4))
+    payload = {"n": len(CLASSES), "kinds": KIND_NAMES, "slugs": [var["slug"] for var in VARIETIES],
+               "labels": [var["label"] for var in VARIETIES]}
     payload.update({name: "".join(values) for name, values in columns.items()})
     return "window.SEMIBASE = " + json.dumps(payload, separators=(",", ":"), ensure_ascii=False) + ";\n"
 
@@ -971,8 +1270,8 @@ def data_js():
 GRAPH_CACHE = os.path.join(DATA, "graph-layout.json")
 
 
-def radius(t):
-    return round(3.5 + 1.3 * math.log(len(GENS[t])), 1)
+def radius(v):
+    return round(3.5 + 1.3 * math.log(len(GENS[v])), 1)
 
 
 def graph_layout():
@@ -984,8 +1283,8 @@ def graph_layout():
              "graph [rankdir=TB, ranksep=2.4, nodesep=0.25, splines=spline, newrank=true, mclimit=4, remincross=true];",
              'node [shape=circle, fixedsize=true, label=""];',
              "edge [arrowhead=none, headclip=false, tailclip=false];"]
-    lines += [f"v{VNAME[t]} [width={2 * radius(t) / 72:.4f}];" for t in sorted(THEORY_BASES, key=VNAME.get)]
-    lines += [f"v{VNAME[b]} -> v{VNAME[a]};" for a, b in ORDER["cover_edges"]]
+    lines += [f'"{VARIETIES[v]["slug"]}" [width={2 * radius(v) / 72:.4f}];' for v in range(NV)]
+    lines += [f'"{VARIETIES[b]["slug"]}" -> "{VARIETIES[a]["slug"]}";' for a in range(NV) for b in UP[a]]
     source = "\n".join(lines + ["}"]) + "\n"
     key = hashlib.sha256(source.encode()).hexdigest()
     if os.path.exists(GRAPH_CACHE):
@@ -993,24 +1292,25 @@ def graph_layout():
             cached = json.load(handle)
         if cached.get("key") == key:
             return cached
+    log("laying out the graph with dot ...")
     try:
         output = subprocess.run(["dot", "-Tjson"], input=source, capture_output=True, text=True, check=True).stdout
     except (OSError, subprocess.CalledProcessError) as error:
         raise SystemExit(f"Graphviz (dot) is needed to lay out the graph of the varieties: {error}")
     graph = json.loads(output)
-    width, height = (float(v) for v in graph["bb"].split(",")[2:])
-    names = {obj["_gvid"]: obj["name"][1:] for obj in graph["objects"]}
+    width, height = (float(x) for x in graph["bb"].split(",")[2:])
+    names = {obj["_gvid"]: obj["name"] for obj in graph["objects"]}
     nodes = {}
     for obj in graph["objects"]:
         x, y = map(float, obj["pos"].split(","))
-        nodes[obj["name"][1:]] = [round(x, 1), round(height - y, 1)]
+        nodes[obj["name"]] = [round(x, 1), round(height - y, 1)]
     edges = {}
     for edge in graph["edges"]:
         points = [tuple(map(float, p.split(","))) for p in edge["pos"].split() if not p.startswith(("e,", "s,"))]
         assert len(points) % 3 == 1
         coords = [f"{round(x)} {round(height - y)}" for x, y in points]
         upper, lower = names[edge["tail"]], names[edge["head"]]
-        edges[f"{lower}-{upper}"] = "M" + coords[0] + "C" + " ".join(coords[1:])
+        edges[f"{lower} {upper}"] = "M" + coords[0] + "C" + " ".join(coords[1:])
     layout = {"key": key, "width": round(width), "height": round(height), "nodes": nodes, "edges": edges}
     with open(GRAPH_CACHE, "w", encoding="utf-8") as handle:
         json.dump(layout, handle, separators=(",", ":"))
@@ -1018,48 +1318,62 @@ def graph_layout():
 
 
 def graph_data_js():
-    """The data of the inclusion graph: the varieties in the order of their names, the covering edges as
-    pairs (lower, upper) with their route, the shortest known bases, and the variety of each semigroup."""
+    """The data of the inclusion graph: the varieties in the order of their names, the covering edges as pairs
+    (lower, upper) with their route, the bases in the fewest variables, and the variety of each semigroup."""
     layout = graph_layout()
-    order = sorted(THEORY_BASES, key=VNAME.get)
-    index = {t: i for i, t in enumerate(order)}
-    nodes = [[VNAME[t], *layout["nodes"][str(VNAME[t])], radius(t), len(GENS[t]), len(CONTAINS[t])] for t in order]
-    edges = [[index[a], index[b], layout["edges"][f"{VNAME[a]}-{VNAME[b]}"]] for a, b in ORDER["cover_edges"]]
-    bases = [[fmt_identity(e) for e in sorted_identities(SHORTEST[t][1]["identities"])] for t in order]
-    cls = "".join(b36(index[CLASS_THEORY[k]], 2) if k in CLASS_THEORY else "--" for k in range(1, N + 1))
+    nodes = [[VARIETIES[v]["slug"], *layout["nodes"][VARIETIES[v]["slug"]], radius(v), len(GENS[v]),
+              len(MEMBERS[v]), VARIETIES[v]["label"], VARIETIES[v]["dual"]] for v in range(NV)]
+    edges = [[a, b, layout["edges"][f"{VARIETIES[a]['slug']} {VARIETIES[b]['slug']}"]] for a in range(NV) for b in UP[a]]
+    bases = [[nvars(FEWEST_VARS[v]["identities"])] + [fmt_identity(e) for e in
+                                                      sorted_identities(FEWEST_VARS[v]["identities"])]
+             for v in range(NV)]
+    cls = "".join(b36(CLASS_VAR[key], 2) if key in CLASS_VAR else "--" for key in CLASSES)
     payload = {"width": layout["width"], "height": layout["height"], "nodes": nodes, "edges": edges,
-               "bases": bases, "cls": cls, "undecided": [[index[a], index[b]] for a, b in ORDER["undecided"]]}
+               "bases": bases, "cls": cls, "orders": [COUNT[n] for n in C.ORDERS],
+               "alias": {str(old): VARIETIES[v]["slug"] for old, v in MOVED.items()}}
     return "window.SB_GRAPH = " + json.dumps(payload, separators=(",", ":"), ensure_ascii=False) + ";\n"
 
 
 def varieties_page():
-    maximal = sorted((t for t in THEORY_BASES if not UP[t]), key=lambda t: (-len(CONTAINS[t]), VNAME[t]))
-    minimal = sorted((t for t in THEORY_BASES if not DOWN[t]), key=VNAME.get)
+    maximal = sorted((v for v in range(NV) if not UP[v]), key=lambda v: (-len(MEMBERS[v]), v))
+    minimal = [v for v in range(NV) if not DOWN[v]]
+    primitive = Counter(VARIETIES[v]["name"][0] for v in range(NV))
+    selfdual = sum(1 for var in VARIETIES if var["self_dual"])
+    optimal = sum(1 for v in range(NV) if OPTIMAL[v])
     rows = []
-    for t in sorted(THEORY_BASES, key=lambda t: (-len(GENS[t]), VNAME[t])):
-        ids = SHORTEST[t][1]["identities"]
-        first = min(ids, key=lambda e: (size(e), e["lhs"], e["rhs"]))
-        rows.append(f"<tr><td>{vlink(t, '')}</td><td class=\"num\">{len(ids)}</td>"
-                    f"<td class=\"num\">{len(GENS[t]):,}</td><td class=\"num\">{len(CONTAINS[t]):,}</td>"
-                    f"<td class=\"num opt\">{len(UP[t])}</td><td class=\"num opt\">{len(DOWN[t])}</td>"
-                    f"<td class=\"mono opt\">{esc(fmt_identity(first))}{' …' if len(ids) > 1 else ''}</td></tr>")
-    body = f"""<h1>The 505 varieties</h1>
-<p class="lead">The 15,969 finitely based semigroups of order six generate 505 distinct varieties. V[k] is the variety
-generated by [6, k], with k the smallest number among its generators. Ordered by inclusion, they have
-{len(ORDER['cover_edges']):,} covering pairs, {len(maximal)} maximal and {len(minimal)} minimal varieties;
-{len(ORDER['undecided'])} inclusions are undecided.</p>
+    for v in sorted(range(NV), key=lambda v: (-len(GENS[v]), v)):
+        fi, fv = FEWEST_IDS[v]["identities"], FEWEST_VARS[v]["identities"]
+        first = min(fi, key=lambda e: (size(e), e["lhs"], e["rhs"]))
+        var = VARIETIES[v]
+        dual = "self-dual" if var["self_dual"] else vlink(var["dual"], "")
+        entry = SGV.get(v)
+        rows.append(f"<tr><td>{vlink(v, '')}</td><td class=\"opt\">{dual}</td>"
+                    f"<td class=\"num\">{var['name'][0]}</td><td class=\"num\">{len(fi)}</td>"
+                    f"<td class=\"num\">{nvars(fv)}{'' if OPTIMAL[v] else '?'}</td>"
+                    f"<td class=\"num\">{len(GENS[v]):,}</td><td class=\"num opt\">{len(MEMBERS[v]):,}</td>"
+                    f"<td class=\"num opt\">{len(UP[v])}</td><td class=\"num opt\">{len(DOWN[v])}</td>"
+                    f"<td class=\"opt\">{entry['name'] if entry else '–'}</td>"
+                    f"<td class=\"mono opt\">{esc(fmt_identity(first))}{' …' if len(fi) > 1 else ''}</td></tr>")
+    counts = ", ".join(f"{primitive[n]} of order {n}" for n in C.ORDERS)
+    body = f"""<h1>The {NV} varieties</h1>
+<p class="lead">The finitely based semigroups of orders one to six, each table and its transpose, generate {NV}
+distinct varieties, counting a variety and its dual separately: {selfdual} are self-dual and the others form
+{(NV - selfdual) // 2} dual pairs. V[n, k] is the variety generated by [n, k], and V[n, k]{OP} its dual, generated by
+the transposed table; each is named after its generator of least order, then least number. By the order of that
+generator: {counts}. Ordered by inclusion, they have {sum(len(UP[v]) for v in range(NV)):,} covering pairs,
+{len(maximal)} maximal varieties and {len(minimal)} minimal one, the trivial variety; every inclusion is decided.</p>
 <div class="tabs" role="tablist"><a href="#list" role="tab" aria-selected="true">List</a><a href="#graph" role="tab"
 aria-selected="false">Inclusion graph</a></div>
 <noscript><p class="note">The inclusion graph needs JavaScript; the list below has the same information.</p></noscript>
 <section id="graph-view" hidden>
 <div class="graph" id="graph" data-src="{asset('graph-data.js', '')}">
 <div class="bar">
-<form><input type="search" placeholder="Find V[k] or a semigroup [6, k]" aria-label="Find a variety, or the variety of a semigroup"><button class="btn" type="submit">Find</button></form>
+<form><input type="search" placeholder="Find V[5, 540], or a semigroup [6, 3842]" aria-label="Find a variety, or the variety of a semigroup"><button class="btn" type="submit">Find</button></form>
 <div class="group" role="group" aria-label="View"><button type="button" class="btn" id="g-all" aria-pressed="true">Whole order</button><button type="button" class="btn" id="g-around" aria-pressed="false" disabled>Around selection</button><select id="g-steps" aria-label="Steps around the selection" disabled><option value="1">1 step</option><option value="2" selected>2 steps</option><option value="3">3 steps</option><option value="0">all</option></select></div>
 <div class="group" role="group" aria-label="Zoom"><button type="button" class="btn" id="g-out" aria-label="Zoom out">−</button><button type="button" class="btn" id="g-in" aria-label="Zoom in">+</button><button type="button" class="btn" id="g-fit">Fit</button><button type="button" class="btn" id="g-full" aria-pressed="false">Full screen</button></div>
 </div>
-<div class="stage"><div class="view"><canvas tabindex="0" role="img" aria-label="The inclusion graph of the 505 varieties. The List tab has the same information as text."></canvas><div class="msg" aria-live="polite"></div><div class="tip" hidden></div></div><div class="info" hidden></div></div>
-<div class="legend"><span><i style="background:var(--accent)"></i>selected</span><span><i style="background:var(--good)"></i>above: contains it</span><span><i style="background:var(--warn)"></i>below: lies in it</span><span><i class="dash"></i>undecided</span><span>larger dots: more generators</span></div>
+<div class="stage"><div class="view"><canvas tabindex="0" role="img" aria-label="The inclusion graph of the {NV} varieties. The List tab has the same information as text."></canvas><div class="msg" aria-live="polite"></div><div class="tip" hidden></div></div><div class="info" hidden></div></div>
+<div class="legend"><span><i style="background:var(--accent)"></i>selected</span><span><i style="background:var(--good)"></i>above: contains it</span><span><i style="background:var(--warn)"></i>below: lies in it</span><span>larger dots: more generators</span></div>
 </div>
 <p class="note">Each dot is a variety, drawn below the varieties that contain it; a line joins it to each variety
 directly above it. Select a variety to see everything above and below it, and choose "Around selection" to lay out
@@ -1068,14 +1382,16 @@ Graphviz.</p>
 </section>
 <section id="list-view">
 <h2>Maximal varieties ({len(maximal)})</h2><p class="note">Contained in no other variety of the census, the largest
-first; start here and go down.</p>{links([vlink(t, '') for t in maximal])}
-<h2>Minimal varieties ({len(minimal)})</h2>{links([vlink(t, '') for t in minimal])}
-<h2>All varieties</h2><p class="note">Sorted by the number of generators; click a column to sort. Basis: identities in
-the shortest known basis, of which the shortest is shown. Contains: semigroups of order six in the variety. Above,
-below: the covering varieties.</p>
+first; start here and go down.</p>{links([vlink(v, '') for v in maximal])}
+<h2>All varieties</h2><p class="note">Sorted by the number of generators; click a column to sort. Order: the least
+order of a generator. Identities: the basis with the fewest identities, whose shortest identity is shown. Variables:
+the basis in the fewest variables, with a question mark when a basis in fewer variables is not ruled out ({NV - optimal}
+of the {NV}). Generators and Contains: semigroups of orders one to six, up to isomorphism. Database: the name in the
+database of Araújo et al. of the {len(SGV)} varieties generated by a semigroup of order at most five.</p>
 <div class="listbar"><span></span><button type="button" class="btn colsbtn" data-target="varieties-table" aria-pressed="false">All columns</button></div>
-<div class="scroll" id="varieties-table"><table class="list sortable"><thead><tr><th>Variety</th><th class="num">Basis</th><th class="num">Generators</th>
-<th class="num">Contains</th><th class="num opt">Above</th><th class="num opt">Below</th><th class="opt">Shortest identity</th></tr></thead>
+<div class="scroll" id="varieties-table"><table class="list sortable"><thead><tr><th>Variety</th><th class="opt">Dual</th><th class="num">Order</th>
+<th class="num">Identities</th><th class="num">Variables</th><th class="num">Generators</th><th class="num opt">Contains</th>
+<th class="num opt">Above</th><th class="num opt">Below</th><th class="opt">Database</th><th class="opt">Shortest identity</th></tr></thead>
 <tbody>{''.join(rows)}</tbody></table></div>
 </section>"""
     return page("Varieties · SemiBase", body, "", scripts=("graph.js",))
@@ -1084,125 +1400,206 @@ below: the covering varieties.</p>
 def nonfinite_page():
     sections = []
     for k in (3843, 8564, 8878, 13747):
-        name, words = NONFINITE[k]
+        name, words = NONFINITE_NAMES[k]
         family, argument, source = NONFINITE_DETAIL[k]
         path, line, theorem, _ = ENDPOINT[k]
-        sections.append(f"""<h2>{esc(name)} = {slink(k, '', named=False)}</h2><div class="two"><div>{cayley(TABLE[k], PROPS[k])}</div>
+        sections.append(f"""<h2>{esc(name)} = {slink((6, k), '', named=False)}</h2><div class="two"><div>{cayley(TABLE[(6, k)], PROPS[(6, k)])}</div>
 <div><p>{esc(words[0].upper() + words[1:])}. For every n,</p><p class="formula">{esc(family)}</p><p>{esc(argument)}</p>
 <p class="note">{esc(source[0].upper() + source[1:])}. Lean: <a href="{lean_url(path, line)}" class="mono">{esc(theorem)}</a></p></div></div>""")
     body = f"""<h1>The four semigroups without a finite basis</h1>
-<p class="lead">Every semigroup of order six has a finite identity basis except four: L, B₂¹, A₂ᵍ and A₂¹ (Lee, Li and
-Zhang 2012). Each Lean proof exhibits infinitely many identities of the semigroup, one for every n, and a property of
-words that separates the two sides of the n-th identity and survives every derivation step with an identity in fewer
-than n variables. So no finite set of identities derives them all. None of the four lies in any of the 505 varieties
-generated by the finitely based semigroups of order six.</p>
+<p class="lead">Every semigroup of order at most six has a finite identity basis except four, all of order six: L,
+B₂¹, A₂ᵍ and A₂¹ (Lee, Li and Zhang 2012); every semigroup of order at most five is finitely based (Trahtman 1983).
+Each Lean proof exhibits infinitely many identities of the semigroup, one for every n, and a property of words that
+separates the two sides of the n-th identity and survives every derivation step with an identity in fewer than n
+variables. So no finite set of identities derives them all. None of the four, and none of their transposes, lies in
+any of the {NV} varieties generated by the finitely based semigroups of orders one to six.</p>
 {''.join(sections)}"""
     return page("No finite basis · SemiBase", body, "")
 
 
 def index_page():
-    sizes = Counter(len(SHORTEST[CLASS_THEORY[k]][1]["identities"]) for k in CLASS_THEORY)
+    sizes = Counter(nvars(FEWEST_VARS[v]["identities"]) for v in range(NV))
     peak = max(sizes.values())
     bars = "".join(f'<span class="lab">{s}</span><div><div class="bar" style="width:{100 * c / peak:.1f}%"></div></div>'
                    f'<span class="lab">{c:,}</span>' for s, c in sorted(sizes.items()))
-    biggest = max(range(1, N + 1), key=lambda k: OWN[k])
-    longest = max(CLASS_THEORY, key=lambda k: (len(BASIS[CLASS_BASIS[k]]), -k))
-    longest_short = max(THEORY_BASES, key=lambda t: (len(SHORTEST[t][1]["identities"]), -VNAME[t]))
-    widest = max(THEORY_BASES, key=lambda t: (len(GENS[t]), -VNAME[t]))
-    body = f"""<h1>Identity bases of the semigroups of order six</h1>
-<p class="lead">A census of the 15,973 semigroups of order six, counted up to isomorphism and anti-isomorphism. All of
-them except four have a finite identity basis, and every case is proved in Lean: an explicit basis for each of the
-15,969 finitely based semigroups, for most of which only the existence of a finite basis was known before, and a
-proof for the other four that no finite basis exists.</p>
-<form class="big" onsubmit="return sbGo(this)" data-root=""><input name="q" placeholder="Go to a semigroup: 3842, [6, 3842], L, B21, C8" aria-label="Go to a semigroup"></form>
-<div class="numbers"><div><b>15,973</b><span>semigroups of order six</span></div>
-<div><b>15,969</b><span>finitely based, each with a basis certified in Lean</span></div>
-<div><b>4</b><span>without a finite basis, proved in Lean</span></div>
-<div><b>536</b><span>distinct certified bases</span></div>
-<div><b>505</b><span>distinct varieties</span></div></div>
+    biggest = max(CLASSES, key=lambda key: OWN[key])
+    longest = max(CLASS_BASIS, key=lambda key: (len(BASIS[CLASS_BASIS[key]]), -key[0], -key[1]))
+    longest_short = max(range(NV), key=lambda v: (len(FEWEST_IDS[v]["identities"]), -v))
+    widest = max(range(NV), key=lambda v: (len(GENS[v]), -v))
+    optimal = sum(1 for v in range(NV) if OPTIMAL[v])
+    found = sum(1 for v in range(NV) if FEWEST_VARS[v]["kind"] == "search")
+    body = f"""<h1>Identity bases of the semigroups of orders one to six</h1>
+<p class="lead">A census of the {len(CLASSES):,} semigroups of orders one to six, counted up to isomorphism and
+anti-isomorphism as in GAP Smallsemi: {NLOW:,} of order at most five and {N6:,} of order six. All of them except four
+have a finite identity basis, and every case is proved in Lean: an explicit basis for each of the
+{len(CLASS_BASIS):,} finitely based semigroups, for most of which only the existence of a finite basis was known
+before, and a proof for the other four that no finite basis exists.</p>
+<form class="big" onsubmit="return sbGo(this)" data-root=""><input name="q" placeholder="Go to a semigroup: 3842, [5, 415], L, B2, C8" aria-label="Go to a semigroup"></form>
+<div class="numbers"><div><b>{len(CLASSES):,}</b><span>semigroups of orders one to six</span></div>
+<div><b>{len(CLASS_BASIS):,}</b><span>finitely based, each with a basis certified in Lean</span></div>
+<div><b>4</b><span>without a finite basis, all of order six, proved in Lean</span></div>
+<div><b>{len(BASIS):,}</b><span>distinct certified bases</span></div>
+<div><b>{NV}</b><span>distinct varieties, counting duals</span></div>
+<div><b>{optimal}</b><span>of them with a basis in as few variables as possible</span></div></div>
 <h2>Explore</h2>
 <ul class="explore">
-<li><a href="browse.html">Browse</a> all 15,973 semigroups and filter them by structure, basis and proof.</li>
-<li><a href="varieties.html">Varieties</a>: the 505 varieties the semigroups generate, as a list or as an
-<a href="varieties.html#graph">interactive graph of their inclusions</a>.</li>
+<li><a href="browse.html">Browse</a> all {len(CLASSES):,} semigroups and filter them by order, structure, basis and proof.</li>
+<li><a href="varieties.html">Varieties</a>: the {NV} varieties the semigroups and their transposes generate, as a list
+or as an <a href="varieties.html#graph">interactive graph of their inclusions</a>.</li>
 <li><a href="nonfinite.html">No finite basis</a>: L, B₂¹, A₂ᵍ and A₂¹, and why no finite set of identities suffices.</li>
 <li><a href="s/1.html" onclick="return sbRandom('')">A random semigroup</a>.</li>
 </ul>
 <h2>Worth a look</h2>
 <ul class="explore">
-<li>{slink(3842, '')}, the semigroup C₈ of Lee and Zhang: finitely based, two table entries away from the nonfinitely based L.</li>
+<li>{slink((6, 3842), '')}, the semigroup C₈ of Lee and Zhang: finitely based, two table entries away from the nonfinitely based L.</li>
+<li>{slink((5, 415), '')} and {slink((5, 868), '')}: finitely based; adjoining an identity to either gives a semigroup of order six without a finite basis.</li>
+<li>{vlink(C.SLUG['5-540'], '')}: the variety V(5,140) of the database of Araújo et al., with a basis in three variables where the certified one uses four.</li>
 <li>{slink(biggest, '')}: the largest proof, {OWN[biggest]:,} lines of Lean that the proof of no other class uses.</li>
-<li>{slink(longest, '')}: the longest certified basis, {len(BASIS[CLASS_BASIS[longest]]):,} identities, which reduce to {len(SHORTEST[CLASS_THEORY[longest]][1]['identities'])}.</li>
-<li>{vlink(longest_short, '')}: the variety whose shortest known basis is longest, with {len(SHORTEST[longest_short][1]['identities'])} identities.</li>
-<li>{vlink(widest, '')}: the variety with the most generators, {len(GENS[widest]):,} semigroups of order six.</li>
+<li>{slink(longest, '')}: the longest certified basis, {len(BASIS[CLASS_BASIS[longest]]):,} identities, which reduce to {len(FEWEST_IDS[CLASS_VAR[longest]]['identities'])}.</li>
+<li>{vlink(longest_short, '')}: the variety whose basis with the fewest identities is longest, with {len(FEWEST_IDS[longest_short]['identities'])} identities.</li>
+<li>{vlink(widest, '')}: the variety with the most generators, {len(GENS[widest]):,} semigroups of order at most six.</li>
 </ul>
-<h2>How short are the bases?</h2>
-<p class="note">The finitely based semigroups by the number of identities in their shortest known basis.</p>
+<h2>How many variables do the bases need?</h2>
+<p class="note">The {NV} varieties by the number of variables of their basis in the fewest variables: the largest
+number of distinct variables in one identity, which decides how long it takes to check whether a semigroup lies in
+the variety. For {optimal} varieties no basis in fewer variables exists. {found} of the bases in the fewest variables
+were found by a search for this census, beyond the certified bases and their reductions.</p>
 <div class="bars">{bars}</div>
 <h2>On each page</h2>
-<p>For each semigroup: the Cayley table and its structure; the shortest known basis and the basis certified in Lean;
-the Lean theorem, linked to its line, and the size of its proof; the variety it generates, with the varieties directly
-above and below and the other semigroups that generate it; and the tables that differ from it in one or two entries.
+<p>For each semigroup: the Cayley table and its structure; the basis of its variety in the fewest variables and the
+basis with the fewest identities, and the basis certified in Lean; the Lean theorem and the size of its proof; the
+variety it generates and the one its transpose generates, with the varieties directly above and below and the other
+semigroups that generate it; and the tables that differ from it in one or two entries.
 <a href="about.html">About</a> says what is proved in Lean and what is not.</p>"""
-    return page("SemiBase: identity bases of the semigroups of order six", body, "",
-                "Every semigroup of order six with its identity basis, Lean proof and variety.")
+    return page("SemiBase: identity bases of the semigroups of orders one to six", body, "",
+                "Every semigroup of order at most six with its identity bases, Lean proof and variety.")
 
 
 def about_page():
-    counts = Counter(KIND.values())
-    kinds = "".join(f"<tr><td>{esc(name)}</td><td class=\"num\">{counts[name]:,}</td><td>{esc(KIND_SUMMARY[name])}</td></tr>"
-                    for name in KIND_NAMES if counts[name])
+    counts = Counter(KIND[key] for key in CLASSES if key[0] == 6)
+    lower_counts = Counter(KIND[key] for key in CLASSES if key[0] < 6)
+    kinds = "".join(f"<tr><td>{esc(name)}</td><td class=\"num\">{counts[name]:,}</td>"
+                    f"<td class=\"num\">{lower_counts[name]:,}</td><td>{esc(KIND_SUMMARY[name])}</td></tr>"
+                    for name in KIND_NAMES)
+    optimal = sum(1 for v in range(NV) if OPTIMAL[v])
+    found = sum(1 for v in range(NV) if FEWEST_VARS[v]["kind"] == "search")
+    selfdual = sum(1 for var in VARIETIES if var["self_dual"])
+    same = sum(1 for e in LOWER_ENDPOINT.values() if e["same"])
+    models = sum(1 for v in range(NV) if BOUND_INFO[v].get("model"))
     body = f"""<h1>About the census</h1>
 <h2>What is proved in Lean</h2>
-<p>For each of the 15,973 semigroups of order six in GAP Smallsemi 0.7.2, a theorem: either a finite list of
-identities is a basis, that is, the identities hold and every identity of the semigroup follows from them by
-equational logic, or no finite basis exists. One theorem collects them all,
-<span class="mono">SemiBase.order6_classification</span>. The Lean kernel checks every proof, and the proofs use no
-axioms beyond propositional extensionality, quotient soundness and choice. Sources, build instructions and the checks
-of the tables: <a href="{REPO_URL}">nasqret/semibase-order6</a>, archived on Zenodo as
-<a href="https://doi.org/10.5281/zenodo.23109225">doi:10.5281/zenodo.23109225</a>.</p>
+<p>For each of the {len(CLASSES):,} semigroups of orders one to six in GAP Smallsemi 0.7.2, a theorem: either a finite
+list of identities is a basis, that is, the identities hold and every identity of the semigroup follows from them by
+equational logic, or no finite basis exists. The Lean kernel checks every proof, and the proofs use no axioms beyond
+propositional extensionality, quotient soundness and choice.</p>
+<ul><li>Order six: one theorem collects the {N6:,} cases, <span class="mono">SemiBase.order6_classification</span>.
+Sources, build instructions and the checks of the tables: <a href="{REPO_URL}">nasqret/semibase-order6</a>, archived on
+Zenodo as <a href="https://doi.org/{DOI}">doi:{DOI}</a>.</li>
+<li>Orders one to five: a theorem for each of the {NLOW:,} semigroups, from the same campaign, audited in both
+orientations with the Lean kernel; for order five a second replay read the bases back from Lean. {PUBLIC_LOWER:,} of
+these theorems are in the public repository, which builds them as part of the proofs of order six ({same:,} in the
+very revision the audit checked); the semigroup pages link them. The other {NLOW - PUBLIC_LOWER:,} are in the
+repository of the campaign, which is not public.</li></ul>
 <h2>What is not proved in Lean</h2>
-<ul><li>The shortest known bases come from the certified ones by removing identities that follow from the others, with
-the prover Vampire; their equivalence with the certified bases rests on Vampire's proofs. Shortest known means
-shortest found, not proved minimal.</li>
-<li>The inclusions between the varieties are proved by Vampire, and the non-inclusions by semigroups of order six that
-lie in one variety and not in the other. {len(ORDER['undecided'])} inclusions are undecided.</li>
-<li>That Smallsemi lists every semigroup of order six once, up to isomorphism and anti-isomorphism, is taken from GAP
-and the literature.</li></ul>
+<ul><li>The bases with the fewest identities come from the certified ones by removing identities that follow from the
+others, with the prover Vampire, and the bases in the fewest variables partly from a search for this census, also
+checked with Vampire (see below). Their equivalence with the certified bases rests on Vampire's proofs.</li>
+<li>That Smallsemi lists every semigroup of order at most six once, up to isomorphism and anti-isomorphism, is taken
+from GAP and the literature.</li></ul>
+<p>The inclusions between the varieties need no prover: a variety V(S) lies in a variety W exactly when S satisfies a
+basis of W, and evaluating the certified basis of W in the table of S decides it. So every inclusion among the {NV}
+varieties is decided, and two semigroups generate the same variety exactly when each satisfies the basis of the
+other.</p>
+<h2>Duals and smaller generators</h2>
+<p>Smallsemi counts a semigroup and its opposite, with the transposed table, once. Their varieties are dual: an identity
+holds in one exactly when it holds read backwards in the other. The census lists both. V[n, k] is the variety generated
+by [n, k] and V[n, k]{OP} the variety generated by its transpose, and each variety is named after its generator of least
+order, then least number, a table before its transpose. So the {NV} varieties come in {selfdual} self-dual ones and
+{(NV - selfdual) // 2} dual pairs V[n, k] and V[n, k]{OP}, and the name of a variety tells the least order of a single
+semigroup that generates it. The lists of generators and of members of a variety include the transposes, marked
+{OP}.</p>
+<p>The {len(SGV)} varieties generated by a semigroup of order at most five are exactly the varieties of the database of
+Araújo, Araújo, Cameron, Lee and Raminhos, which also counts duals separately; each variety page gives the name it has
+there, such as V(5,140). The bases of the database hold in exactly the same tables of order at most six, and their
+transposes, as the bases of this census (checked by <span class="mono">prep/prepare_lower.py</span>).</p>
+<h2>Bases in few variables</h2>
+<p>To decide whether a semigroup of order n satisfies an identity in k variables takes about n<sup>k</sup> evaluations,
+so for testing membership in a variety a basis in few variables is better than a basis of few identities. Each variety
+page shows a basis in the fewest variables known, counting the largest number of distinct variables in one identity,
+and a basis with the fewest identities when it is a different one.</p>
+<ul><li>Lower bounds: if a semigroup T lies outside a variety V but satisfies every identity of V in k variables, then
+no basis of V uses only k variables. Among the tables of order at most six, T qualifies when every subsemigroup of T
+generated by k elements lies in V. Beyond them, the finite model builder of Vampire found {models} larger
+semigroups that satisfy the rules of a complete rewriting system of the free object of V on k generators, and so
+every identity of V in k variables, without lying in V. The variety pages show the witness of each bound, and
+<span class="mono">check_data.py</span> checks every one by evaluation.</li>
+<li>Upper bounds: the identities of V in k variables are those of the free object of V on k generators, the functions
+that words define on the generator of V. A complete rewriting system of that free object gives finitely many of them;
+when Vampire derives a certified basis from some of them, those are a basis, and the redundant ones are removed, again
+with Vampire.</li></ul>
+<p>For {optimal} of the {NV} varieties the two bounds meet, so the basis shown uses as few variables as possible.
+{found} of the bases in the fewest variables were found by the search, among them the basis
+x⁴yz ≈ xyz, x³ ≈ y³, xy ≈ yx of V(5,140) in three variables, where the certified basis x³yzt ≈ yzt, xy ≈ yx uses
+four.</p>
 <h2>What was known</h2>
-<p>That exactly four semigroups of order six are not finitely based was shown by Lee, Li and Zhang (2012), and Lee and
-Zhang (2015) treat the semigroups of order six in detail. For most of the finitely based ones, 14,534 of the 14,600
-semigroups without an identity element, finite basability follows there from sufficient conditions, which show that a
-finite basis exists without writing one down. The census gives an explicit basis for every one of them.</p>
+<p>That every semigroup of order at most five is finitely based was shown by Trahtman (1983), without listing the
+bases. That exactly four semigroups of order six are not finitely based was shown by Lee, Li and Zhang (2012), and Lee
+and Zhang (2015) treat the semigroups of order six in detail. For most of the finitely based ones, 14,534 of the 14,600
+semigroups of order six without an identity element, finite basability follows there from sufficient conditions, which
+show that a finite basis exists without writing one down. The census gives an explicit basis for every one of them.
+Araújo, Araújo, Cameron, Lee and Raminhos (2023) survey the varieties generated by the semigroups of order at most
+five, with bases.</p>
 <h2>How the proofs work</h2>
 <p>Most proofs are transfers. If a semigroup S with a certified basis lies in the variety of a semigroup T, and T
 satisfies the basis of S, then every identity of T holds in S and so follows from the basis: the basis of S is a basis
 of T. The transfers differ in how S lies in the variety of T. Each semigroup page names the method of its proof.</p>
-<div class="scroll"><table class="list"><thead><tr><th>Proof</th><th class="num">Classes</th><th>Idea</th></tr></thead><tbody>{kinds}</tbody></table></div>
+<div class="scroll"><table class="list"><thead><tr><th>Proof</th><th class="num">Order 6</th><th class="num">Orders 1–5</th><th>Idea</th></tr></thead><tbody>{kinds}</tbody></table></div>
 <h2>Conventions</h2>
-<p>Elements are numbered 1 to 6 as in Smallsemi (0 to 5 in Lean), and a table gives the product of the row element and
+<p>Elements are numbered from 1 as in Smallsemi (from 0 in Lean), and a table gives the product of the row element and
 the column element. An identity u ≈ v is written with the variables x, y, z, t, … in order of first occurrence and with
-powers for repeated letters, so x²yx stands for xxyx. V[k] is the variety generated by [6, k], with k the smallest
-number among its generators. A class that is not self-dual stands for two semigroups, a table and its transpose; a basis
-read backwards is a basis of the transpose. The links to Lean point to commit <span class="mono">{COMMIT[:7]}</span>
-of the repository.</p>
+powers for repeated letters, so x²yx stands for xxyx. [n, k] is the semigroup number k of order n in Smallsemi. A class
+that is not self-dual stands for two semigroups, a table and its transpose; a basis read backwards is a basis of the
+transpose, a lemma in Lean (<span class="mono">BasisFor.oppositeReversed</span>). The links to Lean point to commit
+<span class="mono">{COMMIT[:7]}</span> of the repository. The variety pages of the first release, named after
+generators of order six, lead to the new names.</p>
 <h2>Credits</h2>
 <p>Created and curated by <a href="https://github.com/nasqret">@nasqret</a>. The Lean proofs were written by
 language-model agents in a campaign from June to September 2026, described in <i>{esc(PAPER)}</i>. The reduced bases
-and the order of the varieties were computed with Vampire by the <span class="mono">bases-min</span> tools of Mikoláš
-Janota. The tables come from GAP Smallsemi by A. Distler and J. D. Mitchell. The source of this website is
-<a href="https://github.com/nasqret/semibase-site">nasqret/semibase-site</a>.</p>
+of order six were computed with Vampire by the <span class="mono">bases-min</span> tools of Mikoláš Janota, which also
+supplied the satisfaction rows over all tables of order at most six. The tables come from GAP Smallsemi by A. Distler
+and J. D. Mitchell. Thanks to E. W. H. Lee for comments on the bases and on duality. The source of this website is
+<a href="{SITE_URL}">nasqret/semibase-site</a>; the same build is also served at
+<a href="https://bnaskrecki.faculty.wmi.amu.edu.pl/semigroups6/">bnaskrecki.faculty.wmi.amu.edu.pl/semigroups6</a>.</p>
 <h2>References</h2><ul class="refs">
+<li>J. Araújo, J. P. Araújo, P. J. Cameron, E. W. H. Lee and J. Raminhos, A survey on varieties generated by small semigroups and a companion website, J. Algebra 635 (2023) 698–735; database <a href="{SGV_URL}">sgv.dm.fct.unl.pt</a>.</li>
 <li>A. Distler and J. D. Mitchell, Smallsemi, a library of small semigroups, GAP package, version 0.7.2.</li>
 <li>E. W. H. Lee, J. R. Li and W. T. Zhang, Minimal non-finitely based semigroups, Semigroup Forum 85 (2012) 577–580.</li>
 <li>E. W. H. Lee and W. T. Zhang, Finite basis problem for semigroups of order six, LMS J. Comput. Math. 18 (2015) 1–129.</li>
 <li>P. Perkins, Bases for equational theories of semigroups, J. Algebra 11 (1969) 298–314.</li>
 <li>M. V. Sapir, Problems of Burnside type and the finite basis property in varieties of semigroups, Math. USSR-Izv. 30 (1988) 295–314.</li>
+<li>A. N. Trahtman, The finite basis question for semigroups of order less than six, Semigroup Forum 27 (1983) 387–389.</li>
 <li>A. N. Trahtman, Some finite infinitely basable semigroups, Ural. Gos. Univ. Mat. Zap. 14 (1987) 128–131.</li>
 <li>M. V. Volkov, The finite basis problem for finite semigroups, Sci. Math. Jpn. 53 (2001) 171–199.</li>
 <li>W. T. Zhang and Y. F. Luo, A new example of a minimal nonfinitely based semigroup, Bull. Aust. Math. Soc. 84 (2011) 484–491.</li></ul>
-<p class="note">Built {TODAY} from commit <span class="mono">{COMMIT}</span>.</p>"""
+<p class="note">Built {TODAY} from commit <span class="mono">{SITE_COMMIT[:12] or 'unknown'}</span> of the website and commit
+<span class="mono">{COMMIT}</span> of the Lean repository.</p>"""
     return page("About · SemiBase", body, "")
+
+
+def build_record():
+    """A record of the build: the commits it was built from and a hash of every file, to compare two copies."""
+    entries = []
+    for directory, _, names in os.walk(OUT):
+        for name in names:
+            path = os.path.relpath(os.path.join(directory, name), OUT)
+            if path == "build.json":
+                continue
+            with open(os.path.join(OUT, path), "rb") as handle:
+                entries.append(f"{hashlib.sha256(handle.read()).hexdigest()}  {path}")
+    entries.sort(key=lambda line: line[66:])
+    content = hashlib.sha256("\n".join(entries).encode()).hexdigest()
+    return {"site_commit": SITE_COMMIT, "lean_commit": COMMIT, "built": TODAY, "files": len(entries),
+            "content_sha256": content}
 
 
 def main():
@@ -1214,18 +1611,24 @@ def main():
         shutil.copy(os.path.join(HERE, "assets", name), os.path.join(OUT, "assets", name))
     with open(os.path.join(HERE, "assets", "site.js"), encoding="utf-8") as handle:
         site_js = handle.read()
-    assert "/*VARIETIES*/[]" in site_js
-    write("assets/site.js", site_js.replace("/*VARIETIES*/[]", json.dumps(sorted(VNAME.values()), separators=(",", ":"))))
+    assert "/*VARIETIES*/[]" in site_js and "/*NAMES*/{}" in site_js
+    site_js = site_js.replace("/*VARIETIES*/[]", json.dumps([var["slug"] for var in VARIETIES], separators=(",", ":")))
+    site_js = site_js.replace("/*NAMES*/{}", json.dumps(SEARCH_NAMES, separators=(",", ":")))
+    site_js = site_js.replace("/*COUNTS*/[]", json.dumps([COUNT[n] for n in C.ORDERS]))
+    write("assets/site.js", site_js)
     write("assets/data.js", data_js())
     write("assets/graph-data.js", graph_data_js())
     for name in sorted(os.listdir(os.path.join(OUT, "assets"))):
         with open(os.path.join(OUT, "assets", name), "rb") as handle:
             ASSET_VERSION[name] = hashlib.sha256(handle.read()).hexdigest()[:10]
     log("pages ...")
-    for k in range(1, N + 1):
-        write(f"s/{k}.html", semigroup_page(k))
-    for t in THEORY_BASES:
-        write(f"v/{VNAME[t]}.html", variety_page(t))
+    for key in CLASSES:
+        write(f"s/{sslug(key)}.html", semigroup_page(key))
+    for v in range(NV):
+        write(f"v/{VARIETIES[v]['slug']}.html", variety_page(v))
+    for old, v in MOVED.items():
+        assert not os.path.exists(os.path.join(OUT, "v", f"{old}.html")), old
+        write(f"v/{old}.html", redirect_page(f"{VARIETIES[v]['slug']}.html", vlabel(v)))
     for b in BASIS:
         write(f"b/{b}.html", basis_page(b))
     write("index.html", index_page())
@@ -1233,9 +1636,13 @@ def main():
     write("varieties.html", varieties_page())
     write("nonfinite.html", nonfinite_page())
     write("about.html", about_page())
-    missing_census = [k for k in range(1, N + 1) if census_ref(k)[1] is None or catalogue_ref(k)[1] is None]
-    print(f"{N} semigroup pages, {len(THEORY_BASES)} variety pages, {len(BASIS)} basis pages")
+    record = build_record()
+    write("build.json", json.dumps(record, indent=1) + "\n")
+    missing_census = [k for k in range(1, N6 + 1) if census_ref(k)[1] is None or catalogue_ref(k)[1] is None]
+    print(f"{len(CLASSES)} semigroup pages, {NV} variety pages ({len(MOVED)} old names redirected), "
+          f"{len(BASIS)} basis pages; {PUBLIC_LOWER} of {NLOW} theorems of order at most five public")
     print(f"endpoint lines not found: {len(MISSING)} {MISSING[:10]}; census lines not found: {len(missing_census)}")
+    print(f"build {record['content_sha256'][:16]} over {record['files']} files")
 
 
 if __name__ == "__main__":
