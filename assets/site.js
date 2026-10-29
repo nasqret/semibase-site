@@ -100,6 +100,16 @@ function sbRandom(root) {
     });
   });
 
+  // The column titles of long lists stick under the page header (style.css): keep --header equal to its height.
+  var header = document.querySelector("header.top");
+  function fitHeader() {
+    var style = document.documentElement.style;
+    if (header && getComputedStyle(header).position === "sticky") style.setProperty("--header", header.offsetHeight + "px");
+    else style.removeProperty("--header");
+  }
+  fitHeader();
+  window.addEventListener("resize", fitHeader);
+
   // On phones, wide tables show their main columns; a button shows them all.
   document.querySelectorAll(".colsbtn").forEach(function (button) {
     button.addEventListener("click", function () {

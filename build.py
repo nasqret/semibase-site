@@ -4,12 +4,14 @@
 One page per semigroup (site/s/<k>.html for [6, k], site/s/<n>-<k>.html for [n, k] with n at most five) with its
 Cayley table, its structure, its bases or the proof that none is finite, its Lean theorem, the variety it generates
 and related semigroups; one page per variety (site/v/<name>.html), counting a variety and its dual separately; one
-page per certified basis (site/b/<id>.html); and overview pages. The site is plain HTML with a little JavaScript,
-and works when opened from disk.
+page per certified basis (site/b/<id>.html); the rule that names the varieties (site/names.html), with the frozen
+list of names (site/names-v1.json); and overview pages. The site is plain HTML with a little JavaScript, and works
+when opened from disk.
 
 The data comes from census.py (classes, bases, the pool of tables and its rows, the varieties and their order) and
 from data/: the bases reduced by Vampire, the bases in few variables found by prep/fewvars.py, the lower bounds of
-prep/variable_bounds.py and the names of the database of Araújo et al. The Lean sources of a checkout of
+prep/variable_bounds.py, the names of the database of Araújo et al., and data/variety-names-v1.json, which fixes the
+names of the varieties: the build stops if the data ever give a different name. The Lean sources of a checkout of
 semibase-order6 (SEMIBASE_REPO, default ../semibase-order6) give the line of every theorem and the code each proof
 needs, and its commit is the one the Lean links point to.
 
@@ -37,6 +39,15 @@ from census import (CLASSES, CLASS_BASIS, CLASS_VAR, CLASS_VAR_OP, COUNT, BASIS,
 
 HERE = C.HERE
 DATA = C.DATA
+
+# The names of the varieties are fixed (names.html): the data must give exactly the names of version 1.
+with open(os.path.join(DATA, "variety-names-v1.json"), "rb") as _handle:
+    NAMES_BYTES = _handle.read()
+NAMES_SHA = hashlib.sha256(NAMES_BYTES).hexdigest()
+REGISTRY = json.loads(NAMES_BYTES)
+for _key, _value in C.name_registry().items():
+    assert REGISTRY[_key] == _value, f"the names differ from data/variety-names-v1.json in {_key!r}; names are fixed"
+NAME_INDEX = {e["slug"]: i for i, e in enumerate(C.NAMES)}
 OUT = os.path.join(HERE, "site")
 REPO = C.REPO
 REPO_URL = "https://github.com/nasqret/semibase-order6"
@@ -233,6 +244,16 @@ def vlabel(v):
 
 def vlink(v, root="../"):
     return f'<a href="{root}v/{VARIETIES[v]["slug"]}.html">{esc(vlabel(v))}</a>'
+
+
+def nlink(k, root="../"):
+    """A link to the variety of the nonfinitely based class [6, k], which is not among VARIETIES."""
+    return f'<a href="{root}v/{k}.html" class="nfb">V[6, {k}]</a>'
+
+
+def name_link(e, root="../"):
+    """A link to the variety of an entry of census.NAMES."""
+    return vlink(e["variety"], root) if e["finite"] else nlink(e["model"][1], root)
 
 
 def blink(b, root="../"):
@@ -756,8 +777,8 @@ def footer_text():
 def page(title, body, root, description="", scripts=()):
     nav = f'<a class="home" href="{root}index.html">Home</a>' + "".join(
         f'<a href="{root}{href}">{label}</a>' for href, label in (
-            ("browse.html", "Browse"), ("varieties.html", "Varieties"), ("nonfinite.html", "No finite basis"),
-            ("about.html", "About")))
+            ("browse.html", "Browse"), ("varieties.html", "Varieties"), ("names.html", "Names"),
+            ("nonfinite.html", "No finite basis"), ("about.html", "About")))
     meta = f'\n<meta name="description" content="{esc(description)}">' if description else ""
     extra = "".join(f'<script src="{asset(s, root)}" defer></script>' for s in scripts)
     return f"""<!doctype html>
@@ -1033,11 +1054,11 @@ semigroups</a>.</p></div>""")
 
     if nfb:
         inside = IN_VARIETIES.get((6, k, 0), 0)
-        body.append(f"""<h2 id="variety">Varieties</h2><p>[6, {k}] generates a variety without a finite basis, so not one of
-the {NV} varieties of the census. """ + (f"It lies in {inside} of them, those whose basis it satisfies.</p>" if inside
-            else "It lies in none of them, and neither does its transpose: no finitely based semigroup of order at "
-                 "most six generates a variety that contains it, as evaluating their bases in this table "
-                 "shows.</p>"))
+        body.append(f"""<h2 id="variety">Variety</h2><p>[6, {k}] generates the variety {nlink(k)}, which has no finite
+basis and so is not one of the {NV} finitely based varieties of the census; [6, {k}] is self-dual, and no other
+semigroup of order at most six generates it. """ + (f"It lies in {inside} of the {NV}, those whose basis it satisfies.</p>" if inside
+            else f"It lies in none of the {NV}: no finitely based semigroup of order at most six generates a variety "
+                 "that contains it, as evaluating their bases in this table shows.</p>"))
     else:
         v = CLASS_VAR[key]
         up, down = UP[v], DOWN[v]
@@ -1121,6 +1142,8 @@ def variety_page(v):
     dual = ("It is self-dual: the opposite of each of its semigroups lies in it too." if var["self_dual"] else
             f"Its dual, the variety of the opposite semigroups, is {vlink(var['dual'])}.")
     primitive = (f"No semigroup of order less than {n} generates it." if n > 1 else "")
+    permanent = (f'<p class="note">The name is permanent: {slabel(n, k, o)} is the least generator of the variety in '
+                 f'the order that <a href="../names.html">names the varieties</a>.</p>')
     sgv = sgv_link(v)
     sgv_text = f" It is {sgv}." if sgv else ""
     certified = []
@@ -1141,7 +1164,7 @@ def variety_page(v):
                f'its smallest generator of order six.</p>' if old is not None and str(old) != var["slug"] else "")
     body = f"""<h1>Variety {esc(label)}</h1>
 <p class="lead">The variety generated by {generator}{f', the opposite of {slabel(n, k)}, with the transposed table' if o else ''}:
-all semigroups that satisfy every identity of {slabel(n, k, o)}. {primitive} {dual}{sgv_text}</p>{renamed}
+all semigroups that satisfy every identity of {slabel(n, k, o)}. {primitive} {dual}{sgv_text}</p>{permanent}{renamed}
 <h2>Identity bases</h2>{basis_boxes(v)}
 <h3>Certified in Lean</h3><ul>{''.join(certified)}</ul>
 {'<p class="note">The certified bases define the same variety: each holds in the generators of the others, and each is a basis of the variety of its own generator.</p>' if len(certified) > 1 else ''}
@@ -1223,7 +1246,7 @@ column, and open one for its table, bases and proof.</p>
 </div></details>
 <div class="listbar"><p id="count" class="muted">Loading …</p><div><button type="button" class="btn colsbtn" data-target="browse-table"
 aria-pressed="false">All columns</button> <button id="reset" class="btn" type="button">Reset</button></div></div>
-<div class="scroll" id="browse-table"><table class="list"><thead><tr><th class="sort" data-key="id">Semigroup</th>
+<div class="scroll long" id="browse-table"><table class="list"><thead><tr><th class="sort" data-key="id">Semigroup</th>
 <th class="sort num" data-key="basis" title="identities in the basis with the fewest identities">Identities</th>
 <th class="sort num" data-key="vars" title="variables of the basis in the fewest variables">Variables</th>
 <th class="sort" data-key="variety">Variety</th><th class="sort num opt" data-key="idem">Idemp.</th>
@@ -1253,7 +1276,7 @@ def data_js():
         columns["num"].append(b36(k, 3))
         columns["basis"].append(b36(len(FEWEST_IDS[v]["identities"]) if fb else 0, 2))
         columns["vars"].append(DIGITS[nvars(FEWEST_VARS[v]["identities"])] if fb else "0")
-        columns["variety"].append(b36(position[v], 2) if fb else "--")
+        columns["variety"].append(b36(position[v] if fb else NV + NONFINITE.index(k), 2))
         columns["nil"].append(str(P["nil"]))
         columns["idem"].append(str(len(P["idem"])))
         flags = int(P["one"] is not None and n > 1) | P["comm"] << 1 | P["band"] << 2 | SELF_DUAL[key] << 3 | \
@@ -1261,8 +1284,9 @@ def data_js():
         columns["flags"].append(DIGITS[flags])
         columns["kind"].append(DIGITS[KIND_NAMES.index(KIND[key])])
         columns["lines"].append(b36(SIZE[key][1], 4))
-    payload = {"n": len(CLASSES), "kinds": KIND_NAMES, "slugs": [var["slug"] for var in VARIETIES],
-               "labels": [var["label"] for var in VARIETIES]}
+    payload = {"n": len(CLASSES), "kinds": KIND_NAMES,      # the varieties, then those of the four without a basis
+               "slugs": [var["slug"] for var in VARIETIES] + [str(k) for k in NONFINITE],
+               "labels": [var["label"] for var in VARIETIES] + [f"V[6, {k}]" for k in NONFINITE]}
     payload.update({name: "".join(values) for name, values in columns.items()})
     return "window.SEMIBASE = " + json.dumps(payload, separators=(",", ":"), ensure_ascii=False) + ";\n"
 
@@ -1341,7 +1365,7 @@ def varieties_page():
     selfdual = sum(1 for var in VARIETIES if var["self_dual"])
     optimal = sum(1 for v in range(NV) if OPTIMAL[v])
     rows = []
-    for v in sorted(range(NV), key=lambda v: (-len(GENS[v]), v)):
+    for v in range(NV):                          # the order of the names
         fi, fv = FEWEST_IDS[v]["identities"], FEWEST_VARS[v]["identities"]
         first = min(fi, key=lambda e: (size(e), e["lhs"], e["rhs"]))
         var = VARIETIES[v]
@@ -1359,9 +1383,12 @@ def varieties_page():
 <p class="lead">The finitely based semigroups of orders one to six, each table and its transpose, generate {NV}
 distinct varieties, counting a variety and its dual separately: {selfdual} are self-dual and the others form
 {(NV - selfdual) // 2} dual pairs. V[n, k] is the variety generated by [n, k], and V[n, k]{OP} its dual, generated by
-the transposed table; each is named after its generator of least order, then least number. By the order of that
-generator: {counts}. Ordered by inclusion, they have {sum(len(UP[v]) for v in range(NV)):,} covering pairs,
-{len(maximal)} maximal varieties and {len(minimal)} minimal one, the trivial variety; every inclusion is decided.</p>
+the transposed table; each is named after its least generator, by the rule that <a href="names.html">Names</a> fixes
+once and for all. By the order of that generator: {counts}. Ordered by inclusion, they have
+{sum(len(UP[v]) for v in range(NV)):,} covering pairs, {len(maximal)} maximal varieties and {len(minimal)} minimal one,
+the trivial variety; every inclusion is decided. The four semigroups without a finite basis generate four more
+varieties, {', '.join(nlink(k, '') for k in NONFINITE[:-1])} and {nlink(NONFINITE[-1], '')}, which lie in none of
+these; they are not in the list or the graph.</p>
 <div class="tabs" role="tablist"><a href="#list" role="tab" aria-selected="true">List</a><a href="#graph" role="tab"
 aria-selected="false">Inclusion graph</a></div>
 <noscript><p class="note">The inclusion graph needs JavaScript; the list below has the same information.</p></noscript>
@@ -1383,13 +1410,13 @@ Graphviz.</p>
 <section id="list-view">
 <h2>Maximal varieties ({len(maximal)})</h2><p class="note">Contained in no other variety of the census, the largest
 first; start here and go down.</p>{links([vlink(v, '') for v in maximal])}
-<h2>All varieties</h2><p class="note">Sorted by the number of generators; click a column to sort. Order: the least
+<h2>All varieties</h2><p class="note">In the order of their names; click a column to sort. Order: the least
 order of a generator. Identities: the basis with the fewest identities, whose shortest identity is shown. Variables:
 the basis in the fewest variables, with a question mark when a basis in fewer variables is not ruled out ({NV - optimal}
 of the {NV}). Generators and Contains: semigroups of orders one to six, up to isomorphism. Database: the name in the
 database of Araújo et al. of the {len(SGV)} varieties generated by a semigroup of order at most five.</p>
 <div class="listbar"><span></span><button type="button" class="btn colsbtn" data-target="varieties-table" aria-pressed="false">All columns</button></div>
-<div class="scroll" id="varieties-table"><table class="list sortable"><thead><tr><th>Variety</th><th class="opt">Dual</th><th class="num">Order</th>
+<div class="scroll long" id="varieties-table"><table class="list sortable"><thead><tr><th data-dir="1">Variety</th><th class="opt">Dual</th><th class="num">Order</th>
 <th class="num">Identities</th><th class="num">Variables</th><th class="num">Generators</th><th class="num opt">Contains</th>
 <th class="num opt">Above</th><th class="num opt">Below</th><th class="opt">Database</th><th class="opt">Shortest identity</th></tr></thead>
 <tbody>{''.join(rows)}</tbody></table></div>
@@ -1405,16 +1432,227 @@ def nonfinite_page():
         path, line, theorem, _ = ENDPOINT[k]
         sections.append(f"""<h2>{esc(name)} = {slink((6, k), '', named=False)}</h2><div class="two"><div>{cayley(TABLE[(6, k)], PROPS[(6, k)])}</div>
 <div><p>{esc(words[0].upper() + words[1:])}. For every n,</p><p class="formula">{esc(family)}</p><p>{esc(argument)}</p>
-<p class="note">{esc(source[0].upper() + source[1:])}. Lean: <a href="{lean_url(path, line)}" class="mono">{esc(theorem)}</a></p></div></div>""")
+<p class="note">{esc(source[0].upper() + source[1:])}. Lean: <a href="{lean_url(path, line)}" class="mono">{esc(theorem)}</a>.
+Its variety: {nlink(k, '')}.</p></div></div>""")
     body = f"""<h1>The four semigroups without a finite basis</h1>
 <p class="lead">Every semigroup of order at most six has a finite identity basis except four, all of order six: L,
 B₂¹, A₂ᵍ and A₂¹ (Lee, Li and Zhang 2012); every semigroup of order at most five is finitely based (Trahtman 1983).
 Each Lean proof exhibits infinitely many identities of the semigroup, one for every n, and a property of words that
 separates the two sides of the n-th identity and survives every derivation step with an identity in fewer than n
 variables. So no finite set of identities derives them all. None of the four, and none of their transposes, lies in
-any of the {NV} varieties generated by the finitely based semigroups of orders one to six.</p>
+any of the {NV} varieties generated by the finitely based semigroups of orders one to six. Each of the four is
+self-dual and generates a variety of its own, {', '.join(nlink(k, '') for k in NONFINITE[:-1])} and
+{nlink(NONFINITE[-1], '')}; three identities tell them apart (<a href="names.html#checks">Names</a>).</p>
 {''.join(sections)}"""
     return page("No finite basis · SemiBase", body, "")
+
+
+def separation_table(root="../"):
+    """The identities that tell apart the varieties of the four nonfinitely based classes, evaluated."""
+    stack = np.stack([np.array(TABLE[(6, k)], dtype=np.int8) - 1 for k in NONFINITE])
+    results = np.array([C.satisfied([e], stack) for e in C.NONFINITE_SEPARATION])
+    assert all((results[:, a] != results[:, b]).any() for a, b in itertools.combinations(range(len(NONFINITE)), 2))
+    head = "".join(f'<th><a href="{root}s/{k}.html">{esc(NONFINITE_NAMES[k][0])}</a></th>' for k in NONFINITE)
+    rows = "".join(f'<tr><td class="mono">{esc(fmt_identity(e))}</td>' +
+                   "".join(f"<td>{'holds' if h else 'fails'}</td>" for h in held) + "</tr>"
+                   for e, held in zip(C.NONFINITE_SEPARATION, results))
+    return (f'<div class="scroll"><table class="list"><thead><tr><th>Identity</th>{head}</tr></thead>'
+            f"<tbody>{rows}</tbody></table></div>")
+
+
+def packed_form(T):
+    """The least renumbering of a 0-based table (census.canonical_table), two entries a, b per character a·n + b:
+    the key under which names.js finds a table."""
+    key = C.canonical_table(T)
+    n, flat = key[0], list(key[1:])
+    flat += [0] * (len(flat) % 2)
+    return "".join(DIGITS[flat[i] * n + flat[i + 1]] for i in range(0, len(flat), 2))
+
+
+def forms_js():
+    """For the lookup on names.html: per order, for k = 1, 2, ..., the packed least renumbering of the table of
+    [n, k], then the positions in the list of names of the varieties of the table and of its transpose, two base-36
+    digits each. A table that is not the renumbering of any of them is a renumbering of a transpose."""
+    index = {e["model"]: i for i, e in enumerate(C.NAMES)}
+
+    def at(n, k, o):
+        if (n, k) not in CLASS_BASIS:
+            return index[(n, k, 0)]
+        return index[VARIETIES[(CLASS_VAR_OP if o else CLASS_VAR)[(n, k)]]["name"]]
+    forms = [""]
+    for n in C.ORDERS:
+        forms.append("".join(packed_form(np.array(TABLE[(n, k)], dtype=np.int8) - 1) + b36(at(n, k, 0), 2) +
+                             b36(at(n, k, 1), 2) for k in range(1, COUNT[n] + 1)))
+    data = {"names": [e["slug"] for e in C.NAMES], "nonfinite": [str(k) for k in NONFINITE], "forms": forms}
+    return ("// The tables of orders one to six for the lookup on names.html, written by build.py (forms_js).\n"
+            f"window.SB_FORMS = {json.dumps(data, separators=(',', ':'))};\n")
+
+
+def long_date(iso):
+    d = datetime.date.fromisoformat(iso)
+    return f"{d.day} {d:%B %Y}"
+
+
+def names_page():
+    by_order = Counter(e["model"][0] for e in C.NAMES)
+    total = len(C.NAMES)
+    selfdual = sum(1 for e in C.NAMES if e["dual"] == e["model"])
+    small = sum(by_order[n] for n in C.ORDERS if n <= 5)
+    counts = ", ".join(f"{by_order[n]} of order {ORDER_WORD[n]}" for n in C.ORDERS)
+    nfb = ", ".join(f"{nlink(k, '')} of {esc(NONFINITE_NAMES[k][0])}" for k in NONFINITE[:-1])
+    nfb += f" and {nlink(NONFINITE[-1], '')} of {esc(NONFINITE_NAMES[NONFINITE[-1]][0])}"
+    first = ", ".join(esc(e["label"]) for e in C.NAMES[:7])
+    date = long_date(REGISTRY["date"])
+    lists = []
+    for n in C.ORDERS:
+        items = links([name_link(e, "") for e in C.NAMES if e["model"][0] == n])
+        if n < 6:
+            lists.append(f"<h3>Generator order {ORDER_WORD[n]}: {by_order[n]}</h3>{items}")
+        else:
+            lists.append(f"<h3>Generator order six: {by_order[n]}</h3><details><summary>Show all "
+                         f"{by_order[n]}</summary>{items}</details>")
+    # The example of the lookup: [6, 5762] with its elements numbered backwards; it generates V[5, 540].
+    T = np.array(TABLE[(6, 5762)]) - 1
+    flip = T.shape[0] - 1 - T[::-1, ::-1]
+    example = "&#10;".join(" ".join(str(x + 1) for x in row) for row in flip)
+    body = f"""<h1>Names of varieties</h1>
+<p class="lead">Each variety generated by a semigroup of order at most six has a permanent name, V[n, k] or
+V[n, k]{OP}, made of the Smallsemi number of its least generator. This page fixes the rule once and for all, states
+what it guarantees, and gives the procedure to find the name of the variety of a finite semigroup.</p>
+<p class="note">Version 1, {date}: {total} names, fixed in <a href="names-v1.json">names-v1.json</a>
+(SHA-256 <span class="mono">{NAMES_SHA}</span>).</p>
+<h2 id="rule">The rule</h2>
+<ol class="rule">
+<li><b>Semigroups.</b> For each order n up to eight, the GAP package Smallsemi lists the semigroups of order n up to
+isomorphism and anti-isomorphism. [n, k] is its semigroup number k, with the Cayley table
+<span class="mono">MultiplicationTable(SmallSemigroup(n, k))</span> of Smallsemi 0.7.2, in which row i and column j
+hold the product of the elements i and j. [n, k]{OP} is the opposite semigroup, with the transposed table. Every
+semigroup of order n is isomorphic to [n, k] or to [n, k]{OP} for exactly one k, and to both when [n, k] is
+self-dual.</li>
+<li><b>Triples.</b> The triple (n, k, 0) stands for [n, k] and (n, k, 1) for [n, k]{OP}. Triples are compared by n,
+then by k, then by the last entry: a smaller order first, then a smaller number, then a table before its
+transpose.</li>
+<li><b>Names.</b> A variety generated by a semigroup of order at most eight is named after the least triple
+(n, k, o) whose semigroup generates it: V[n, k] when o = 0, and V[n, k]{OP} when o = 1.</li>
+<li><b>Order of the varieties.</b> Varieties are ordered as the triples that name them: {first}, and so on. The list
+of names below, names-v1.json and the <a href="varieties.html">list of varieties</a> follow this order.</li>
+</ol>
+<p>Spaces do not matter, so V[5,540] and V[5, 540] are the same name, and in plain text V[5, 540]{OP} may be written
+V[5,540]^op. The square brackets set these names apart from the names V(n, i) of the database of Araújo, Araújo,
+Cameron, Lee and Raminhos: there, too, n is the least order of a generator, but i numbers the varieties of that order
+in the sequence of the database. Each variety page gives both.</p>
+<h2 id="guarantees">What the rule guarantees</h2>
+<ul class="spaced">
+<li><b>One name for each variety, and one variety for each name.</b> V[n, k] always denotes the variety generated by
+[n, k], and V[n, k]{OP} the variety generated by [n, k]{OP}: a name says what it names and cannot become
+ambiguous.</li>
+<li><b>Names never change.</b> A name depends only on its variety and on the numbering of Smallsemi: not on bases,
+proofs or computations, nor on where SemiBase is hosted. Extending the census to semigroups of order seven or eight
+leaves every name as it is, since each new semigroup comes after all those of order at most six; only the varieties
+that no smaller semigroup generates get new names, V[7, k] or V[8, k] and their duals.</li>
+<li><b>The order in the name is the generator order.</b> In V[n, k] and V[n, k]{OP}, n is the least order of a
+semigroup that generates the variety. So the varieties generated by a semigroup of order at most five are exactly the
+{small} whose names have n at most five.</li>
+<li><b>Duals.</b> The dual of V[n, k], the variety of the opposite semigroups, is V[n, k]{OP}, and the dual of
+V[n, k]{OP} is V[n, k]; V[n, k]{OP} is a name exactly when V[n, k] is not self-dual. Indeed S generates a variety
+exactly when S{OP} generates its dual, so the triples that generate the two differ only in the last entry, and the
+least of them share n and k. For example, the left zero semigroups form {vlink(C.SLUG['2-4'], '')} and the right zero
+semigroups {vlink(C.SLUG['2-4-op'], '')}.</li>
+<li><b>A semigroup need not name its own variety.</b> V[n, k] is a name only when no smaller triple generates the
+same variety: {slink((6, 5762), '')} generates {vlink(C.SLUG['5-540'], '')}, for instance. The page of every
+semigroup of order at most six names the varieties of its table and of its transpose.</li>
+</ul>
+<h2 id="find">Finding the name of the variety of a semigroup</h2>
+<p><b>Order at most six.</b> Enter its Cayley table, one row per line: row i and column j hold the product of the
+elements i and j, numbered from 1, or from 0 when an entry is 0. A table copied from GAP works as it is.</p>
+<form class="lookup" id="lookup" data-forms="{asset('forms.js', '')}">
+<textarea name="table" rows="7" spellcheck="false" autocomplete="off" aria-label="Cayley table"></textarea>
+<div class="row"><button class="btn" type="submit">Find its variety</button>
+<button class="btn" type="button" id="lookup-example" data-table="{example}">Example</button></div></form>
+<div class="box" id="lookup-out" aria-live="polite" hidden></div>
+<noscript><p class="note">The lookup needs JavaScript; the semigroup pages give the same names.</p></noscript>
+<p class="note">The page renumbers the table and its transpose in every way, which identifies the semigroup [n, k] of
+Smallsemi and the triple (n, k, o), and reads off the name of its variety. In GAP,
+<span class="mono">IdSmallSemigroup(S)</span> gives [n, k]; then S is isomorphic to
+<span class="mono">SmallSemigroup(n, k)</span>, and o = 0, or only to its opposite, and o = 1. The page of [n, k] and
+names-v1.json give the names of the varieties of both.</p>
+<p><b>Larger order.</b> The variety V(S) of a finite semigroup S has a name in version 1 when a semigroup T of order
+at most six generates it, that is, when S and T satisfy the same identities. The finitely based varieties of the list
+that contain S are those whose basis S satisfies. If V(S) is one of them, it is the least of them under inclusion;
+and if they have a least one, W, then V(S) = W exactly when the generator of W satisfies every identity of S. That is
+decidable: a semigroup of order m satisfies every identity of S once it satisfies those in m variables, and finitely
+many of these, read off the free semigroup of V(S) on m generators (the functions from S<sup>m</sup> to S that words
+define), imply all the others. If none of the {NV} is V(S), it can still be one of the four varieties without a finite
+basis, V(N) for N one of L, B₂¹, A₂ᵍ and A₂¹: V(S) = V(N) exactly when each of S and N satisfies every identity of the
+other, which the same test decides. Otherwise no semigroup of order at most six generates V(S), and version 1 does not
+name it.</p>
+<h2 id="list">The names of version 1</h2>
+<p>{total} names: the {NV} varieties with a finite basis, which the <a href="varieties.html">list of varieties</a>
+shows with their bases, and the four without one, {nfb}. By generator order: {counts}. {selfdual} are self-dual and
+the other {total - selfdual} form {(total - selfdual) // 2} dual pairs.</p>
+<p><a href="names-v1.json">names-v1.json</a> fixes them, in their order: for each name the triple and the table of
+its generator, its dual and whether it has a finite basis; the names of the varieties of every semigroup of order at
+most six and of its transpose; and the names of the first release that they replace.</p>
+{''.join(lists)}
+<h2 id="checks">How the names were found and checked</h2>
+<p>Every finitely based semigroup of order at most six has a basis certified in Lean, so a semigroup lies in its
+variety exactly when it satisfies that basis, and two semigroups generate the same variety exactly when each satisfies
+the basis of the other. Evaluating the bases in the {len(C.SEMIGROUPS):,} semigroups of order at most six, counted up
+to isomorphism, so that a semigroup and its opposite count twice unless they are isomorphic, gives the variety of each,
+and so the least triple of each variety. <span class="mono">check_data.py</span> repeats this by evaluation,
+independently of the satisfaction rows from which the site is built: each semigroup satisfies the basis of the generator
+of its variety, that generator satisfies the basis of the semigroup, and the {NV} varieties are pairwise distinct.</p>
+<p>Each of the four semigroups without a finite basis is self-dual, and the variety it generates has no finite basis,
+so it is none of the {NV}. Three identities tell the four apart, so each of them is the only semigroup of order at most
+six that generates its variety:</p>
+{separation_table('')}
+<h2 id="fixed">How the names stay fixed</h2>
+<ul class="spaced">
+<li>names-v1.json freezes the names of version 1. Every build of this website compares each name with it and stops if
+one differs, so every copy of the site, wherever it is hosted, has the same names; the SHA-256 above identifies the
+file.</li>
+<li>A name is never changed, reused or withdrawn. A later version may only add names, for varieties that no semigroup
+of order at most six generates, and keeps every name of version 1.</li>
+<li>Should an error ever come to light, the name would keep denoting the variety of the semigroup it names, and the
+correction would be recorded here, never made by renaming.</li>
+<li>The first release of this site, on 2 October 2026, covered order six only and called each variety V[k] after its
+least generator of order six. Those names are withdrawn: their pages lead to the new names, and names-v1.json maps all
+{len(REGISTRY['legacy'])} of them.</li>
+</ul>
+<h2 id="cite">Citing a name</h2>
+<p>For example: the variety V[5, 540] of SemiBase (names of varieties, version 1, {date},
+https://nasqret.github.io/semibase-site/names.html).</p>"""
+    return page("Names of varieties · SemiBase", body, "",
+                "The permanent names V[n, k] of the varieties generated by the semigroups of order at most six: "
+                "the rule, its guarantees, the list, and a lookup by Cayley table.", scripts=("names.js",))
+
+
+def nonfinite_variety_page(k):
+    name, words = NONFINITE_NAMES[k]
+    family, argument, source = NONFINITE_DETAIL[k]
+    label = f"V[6, {k}]"
+    others = [esc(NONFINITE_NAMES[j][0]) for j in NONFINITE if j != k]
+    body = f"""<h1>Variety {label} <span class="badge nfb">no finite basis</span></h1>
+<p class="lead">The variety generated by {slink((6, k), named=False)}, {esc(words)}: all semigroups that satisfy every
+identity of {esc(name)}. It has no finite basis. It is self-dual, since {esc(name)} is anti-isomorphic to itself, and
+no other semigroup of order at most six generates it: the variety of a finitely based semigroup has a finite basis,
+and the identities below tell it apart from the varieties of {', '.join(others[:-1])} and {others[-1]}.</p>
+<h2>No finite basis</h2>
+<div class="box nfb"><p>For every n, the identity</p><p class="formula">{esc(family)}</p><p>holds in {esc(name)}.
+{esc(argument)} A finite set of identities uses boundedly many variables, so it misses one of these identities and is
+not a basis.</p><p class="note">Argument: {esc(source)}. The Lean theorem is on the page of
+{slink((6, k), named=False)}; see also <a href="../nonfinite.html">the four semigroups without a finite basis</a>.</p></div>
+<h2>The four varieties without a finite basis</h2>
+<p>{', '.join(nlink(j) for j in NONFINITE[:-1])} and {nlink(NONFINITE[-1])} are distinct: each pair differs on one of
+these identities.</p>
+{separation_table()}
+<h2>Among the {NV} finitely based varieties</h2>
+<p>{esc(name)} lies in none of them, so neither does this variety. Which of them lie in it is not decided here:
+without a finite basis there is no basis to evaluate.</p>
+<p class="note">The name is permanent: [6, {k}] is the only generator of order at most six. See
+<a href="../names.html">how the varieties are named</a>.</p>"""
+    return page(f"Variety {label} · SemiBase", body, "../",
+                f"The variety {label}, generated by {name}: no finite basis.")
 
 
 def index_page():
@@ -1439,13 +1677,15 @@ before, and a proof for the other four that no finite basis exists.</p>
 <div><b>{len(CLASS_BASIS):,}</b><span>finitely based, each with a basis certified in Lean</span></div>
 <div><b>4</b><span>without a finite basis, all of order six, proved in Lean</span></div>
 <div><b>{len(BASIS):,}</b><span>distinct certified bases</span></div>
-<div><b>{NV}</b><span>distinct varieties, counting duals</span></div>
-<div><b>{optimal}</b><span>of them with a basis in as few variables as possible</span></div></div>
+<div><b>{len(C.NAMES)}</b><span>varieties they generate, counting duals, each with a permanent name</span></div>
+<div><b>{optimal}</b><span>of the {NV} finitely based ones with a basis in as few variables as possible</span></div></div>
 <h2>Explore</h2>
 <ul class="explore">
 <li><a href="browse.html">Browse</a> all {len(CLASSES):,} semigroups and filter them by order, structure, basis and proof.</li>
-<li><a href="varieties.html">Varieties</a>: the {NV} varieties the semigroups and their transposes generate, as a list
-or as an <a href="varieties.html#graph">interactive graph of their inclusions</a>.</li>
+<li><a href="varieties.html">Varieties</a>: the {NV} varieties the finitely based semigroups and their transposes
+generate, as a list or as an <a href="varieties.html#graph">interactive graph of their inclusions</a>.</li>
+<li><a href="names.html">Names</a>: the rule that names the {len(C.NAMES)} varieties, fixed once and for all, and the
+name of the variety of any Cayley table of order at most six.</li>
 <li><a href="nonfinite.html">No finite basis</a>: L, B₂¹, A₂ᵍ and A₂¹, and why no finite set of identities suffices.</li>
 <li><a href="s/1.html" onclick="return sbRandom('')">A random semigroup</a>.</li>
 </ul>
@@ -1460,7 +1700,7 @@ or as an <a href="varieties.html#graph">interactive graph of their inclusions</a
 <li>{vlink(widest, '')}: the variety with the most generators, {len(GENS[widest]):,} semigroups of order at most six.</li>
 </ul>
 <h2>How many variables do the bases need?</h2>
-<p class="note">The {NV} varieties by the number of variables of their basis in the fewest variables: the largest
+<p class="note">The {NV} finitely based varieties by the number of variables of their basis in the fewest variables: the largest
 number of distinct variables in one identity, which decides how long it takes to check whether a semigroup lies in
 the variety. For {optimal} varieties no basis in fewer variables exists. {found} of the bases in the fewest variables
 were found by a search for this census, beyond the certified bases and their reductions.</p>
@@ -1514,10 +1754,11 @@ other.</p>
 <p>Smallsemi counts a semigroup and its opposite, with the transposed table, once. Their varieties are dual: an identity
 holds in one exactly when it holds read backwards in the other. The census lists both. V[n, k] is the variety generated
 by [n, k] and V[n, k]{OP} the variety generated by its transpose, and each variety is named after its generator of least
-order, then least number, a table before its transpose. So the {NV} varieties come in {selfdual} self-dual ones and
-{(NV - selfdual) // 2} dual pairs V[n, k] and V[n, k]{OP}, and the name of a variety tells the least order of a single
-semigroup that generates it. The lists of generators and of members of a variety include the transposes, marked
-{OP}.</p>
+order, then least number, a table before its transpose. So the {NV} finitely based varieties come in {selfdual}
+self-dual ones and {(NV - selfdual) // 2} dual pairs V[n, k] and V[n, k]{OP}, and the name of a variety tells the least
+order of a single semigroup that generates it. The lists of generators and of members of a variety include the
+transposes, marked {OP}. <a href="names.html">Names</a> fixes these names once and for all, with the four varieties
+without a finite basis, and finds the name of the variety of any table of order at most six.</p>
 <p>The {len(SGV)} varieties generated by a semigroup of order at most five are exactly the varieties of the database of
 Araújo, Araújo, Cameron, Lee and Raminhos, which also counts duals separately; each variety page gives the name it has
 there, such as V(5,140). The bases of the database hold in exactly the same tables of order at most six, and their
@@ -1607,17 +1848,18 @@ def main():
         shutil.rmtree(OUT)
     os.makedirs(os.path.join(OUT, "assets"))
     log("assets ...")
-    for name in ("style.css", "browse.js", "graph.js", "icon.svg"):
+    for name in ("style.css", "browse.js", "graph.js", "names.js", "icon.svg"):
         shutil.copy(os.path.join(HERE, "assets", name), os.path.join(OUT, "assets", name))
     with open(os.path.join(HERE, "assets", "site.js"), encoding="utf-8") as handle:
         site_js = handle.read()
     assert "/*VARIETIES*/[]" in site_js and "/*NAMES*/{}" in site_js
-    site_js = site_js.replace("/*VARIETIES*/[]", json.dumps([var["slug"] for var in VARIETIES], separators=(",", ":")))
+    site_js = site_js.replace("/*VARIETIES*/[]", json.dumps([e["slug"] for e in C.NAMES], separators=(",", ":")))
     site_js = site_js.replace("/*NAMES*/{}", json.dumps(SEARCH_NAMES, separators=(",", ":")))
     site_js = site_js.replace("/*COUNTS*/[]", json.dumps([COUNT[n] for n in C.ORDERS]))
     write("assets/site.js", site_js)
     write("assets/data.js", data_js())
     write("assets/graph-data.js", graph_data_js())
+    write("assets/forms.js", forms_js())
     for name in sorted(os.listdir(os.path.join(OUT, "assets"))):
         with open(os.path.join(OUT, "assets", name), "rb") as handle:
             ASSET_VERSION[name] = hashlib.sha256(handle.read()).hexdigest()[:10]
@@ -1629,6 +1871,9 @@ def main():
     for old, v in MOVED.items():
         assert not os.path.exists(os.path.join(OUT, "v", f"{old}.html")), old
         write(f"v/{old}.html", redirect_page(f"{VARIETIES[v]['slug']}.html", vlabel(v)))
+    for k in NONFINITE:
+        assert not os.path.exists(os.path.join(OUT, "v", f"{k}.html")), k
+        write(f"v/{k}.html", nonfinite_variety_page(k))
     for b in BASIS:
         write(f"b/{b}.html", basis_page(b))
     write("index.html", index_page())
@@ -1636,10 +1881,13 @@ def main():
     write("varieties.html", varieties_page())
     write("nonfinite.html", nonfinite_page())
     write("about.html", about_page())
+    write("names.html", names_page())
+    with open(os.path.join(OUT, "names-v1.json"), "wb") as handle:
+        handle.write(NAMES_BYTES)
     record = build_record()
     write("build.json", json.dumps(record, indent=1) + "\n")
     missing_census = [k for k in range(1, N6 + 1) if census_ref(k)[1] is None or catalogue_ref(k)[1] is None]
-    print(f"{len(CLASSES)} semigroup pages, {NV} variety pages ({len(MOVED)} old names redirected), "
+    print(f"{len(CLASSES)} semigroup pages, {NV} + {len(NONFINITE)} variety pages ({len(MOVED)} old names redirected), "
           f"{len(BASIS)} basis pages; {PUBLIC_LOWER} of {NLOW} theorems of order at most five public")
     print(f"endpoint lines not found: {len(MISSING)} {MISSING[:10]}; census lines not found: {len(missing_census)}")
     print(f"build {record['content_sha256'][:16]} over {record['files']} files")

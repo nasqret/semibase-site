@@ -14,6 +14,12 @@
    variety in k variables (it satisfies the rules of a complete rewriting system of the free object on k
    generators, recomputed here).
 6. The names of the database of Araújo et al. belong to the varieties of their generators.
+7. The names of the varieties (data/variety-names-v1.json), by evaluating the certified bases, without the rows: no
+   two tables of the census are isomorphic or anti-isomorphic, and a class is self-dual exactly when its transpose is
+   a renumbering of it; every table and its transpose generate the varieties named for them (each lies in the
+   variety of the generator of the name and the generator lies in its variety); the finitely based varieties are
+   pairwise distinct, and the generator of each name is the least table that generates it; the duals are right; and
+   three identities tell apart the four nonfinitely based classes, which are self-dual.
 
 The checks are independent of Lean and of Vampire: they only evaluate identities in tables.
 """
@@ -22,6 +28,7 @@ import json
 import os
 import random
 import sys
+from collections import defaultdict
 
 import numpy as np
 
@@ -74,6 +81,110 @@ def satisfies(T, identities):
     if False in results:
         return False
     return None if None in results else True
+
+
+def within(T, identities):
+    """Whether a 0-based table satisfies every identity: the cheapest first, stopping at the first that fails; None
+    when one is too large to evaluate."""
+    nil = nil_class(T)
+    unknown = False
+    for e in sorted(identities, key=lambda e: (len(set(e["lhs"] + e["rhs"])), size(e))):
+        result = holds(T, e, nil)
+        if result is False:
+            return False
+        unknown = unknown or result is None
+    return None if unknown else True
+
+
+def size(e):
+    return len(e["lhs"]) + len(e["rhs"])
+
+
+def check_names():
+    failures = []
+    registry = json.load(open(os.path.join(C.DATA, "variety-names-v1.json"), encoding="utf-8"))
+
+    # Classes: pairwise neither isomorphic nor anti-isomorphic; self-dual exactly when the transpose is a renumbering.
+    forms = {key: C.canonical_table(np.array(C.TABLE[key]) - 1) for key in C.CLASSES}
+    all_forms = set(forms.values())
+    if len(all_forms) != len(forms):
+        failures.append(("names", "isomorphic classes"))
+    for key in C.CLASSES:
+        transposed = C.canonical_table((np.array(C.TABLE[key]) - 1).T)
+        if (transposed == forms[key]) != C.SELF_DUAL[key] or (not C.SELF_DUAL[key] and transposed in all_forms):
+            failures.append(("names", "self-duality", key))
+
+    # The basis of a table: the certified basis of its class, read backwards for a transpose.
+    def basis(n, k, o):
+        return C.oriented(C.BASIS[C.CLASS_BASIS[(n, k)]], o)
+
+    def table(n, k, o):
+        T = np.array(C.TABLE[(n, k)], dtype=np.int8) - 1
+        return T.T.copy() if o else T
+
+    entries = {e["name"]: e for e in registry["varieties"]}
+    finite = [e for e in registry["varieties"] if e["finitely_based"]]
+    for e in registry["varieties"]:
+        n, k, o = e["generator"]
+        if e["table"] != (table(n, k, o) + 1).tolist() or e["name"] != C.ascii_name(n, k, o):
+            failures.append(("names", "generator", e["name"]))
+
+    # Every table generates the variety named for it: it satisfies the basis of the generator of the name, and the
+    # generator satisfies its basis. The generator of a name is the least of these tables.
+    named = defaultdict(list)                     # name -> the triples whose tables are named for it
+    for key, (name0, name1) in registry["semigroups"].items():
+        n, k = map(int, key.split("-"))
+        named[name0].append((n, k, 0))
+        if not C.SELF_DUAL[(n, k)]:
+            named[name1].append((n, k, 1))
+        elif name1 != name0:
+            failures.append(("names", "self-dual class with two names", key))
+    if set(named) != set(entries):
+        failures.append(("names", "names without tables, or tables without names"))
+    tables = 0
+    for name, triples in named.items():
+        e = entries[name]
+        g = tuple(e["generator"])
+        if min(triples) != g:
+            failures.append(("names", "not the least generator", name))
+        if not e["finitely_based"]:
+            if triples != [g]:
+                failures.append(("names", "nonfinitely based", name))
+            continue
+        G, B = table(*g), basis(*g)
+        for t in triples:
+            tables += 1
+            if within(table(*t), B) is not True or within(G, basis(*t)) is not True:
+                failures.append(("names", "not generating its variety", name, t))
+
+    # The finitely based varieties are pairwise distinct: of two generators, one lies outside the variety of the
+    # other. Each variety is tested with its certified basis in the fewest variables, a basis of it by the above.
+    def cost(ids):
+        return (max(len(set(e["lhs"] + e["rhs"])) for e in ids), sum(size(e) for e in ids))
+    cheap = {e["name"]: min((basis(*t) for t in named[e["name"]]), key=cost) for e in finite}
+    gens = {e["name"]: table(*e["generator"]) for e in finite}
+    for a, b in itertools.combinations([e["name"] for e in finite], 2):
+        if within(gens[a], cheap[b]) is not False and within(gens[b], cheap[a]) is not False:
+            failures.append(("names", "equal varieties", a, b))
+
+    # Duals: the dual of a name is the name of the variety of the transposed generator.
+    for e in registry["varieties"]:
+        n, k, o = e["generator"]
+        if e["dual"] != registry["semigroups"][f"{n}-{k}"][1 - o]:
+            failures.append(("names", "dual", e["name"]))
+
+    # The four nonfinitely based classes: self-dual, and separated pairwise by three identities.
+    results = [[holds(np.array(C.TABLE[(6, k)]) - 1, e) for k in C.NONFINITE] for e in C.NONFINITE_SEPARATION]
+    for a, b in itertools.combinations(range(len(C.NONFINITE)), 2):
+        if not any(r[a] != r[b] for r in results):
+            failures.append(("names", "nonfinitely based not separated", C.NONFINITE[a], C.NONFINITE[b]))
+    if not all(C.SELF_DUAL[(6, k)] for k in C.NONFINITE):
+        failures.append(("names", "nonfinitely based not self-dual"))
+
+    print(f"7. names: {len(registry['varieties'])} names; {tables:,} semigroups, up to isomorphism, generate the "
+          f"varieties named for them; {len(finite)} finitely based varieties, pairwise distinct; the four others "
+          f"separated; {len(failures)} failures")
+    return failures
 
 
 def main():
@@ -170,6 +281,9 @@ def main():
     wrong = [e["name"] for v, e in B.SGV.items() if C.MODEL_VAR[C.LABELS.index(e["generator"])] != v]
     print(f"6. {len(B.SGV)} names of the database, {len(wrong)} wrong")
     failures += wrong
+
+    # 7. the names
+    failures += check_names()
 
     for failure in failures[:20]:
         print("   FAIL", failure)
